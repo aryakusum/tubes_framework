@@ -9,9 +9,16 @@ class Makanan extends Model
 {
     use HasFactory;
     protected $table = 'makanan';
-    protected $fillable = ['id','nama_makanan', 'deskripsi_makanan', 'harga_makanan', 'stok_makanan', 'gambar'];
+    protected $fillable = [
+        'kode_makanan',
+        'nama_makanan',
+        'deskripsi_makanan',
+        'harga_makanan',
+        'stok_makanan',
+        'gambar'
+    ];
 
-    
+
     public function getFormattedPriceAttribute()
     {
         return 'Rp ' . number_format($this->harga_makanan, 0, ',', '.');
