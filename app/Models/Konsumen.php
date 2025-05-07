@@ -13,7 +13,7 @@ class Konsumen extends Model
 
     protected $fillable = [
         'nama_konsumen',
-        'jenis_kelamin',      
+        'jenis_kelamin',
         'alamat',
         'no_telp',
     ];
