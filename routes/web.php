@@ -25,16 +25,17 @@ Route::get('/', function () {
     return view('login');
 });
 // login customer
-Route::get('/Pegawai', [App\Http\Controllers\PegawaiAuthController::class, 'Presensi'])
-     ->middleware('Pegawai')
-     ->name('Presensi');
 
 Route::get('/Pegawai', function () {
     return view('Presensi');
 });
 // tambahan route untuk proses login
-use Illuminate\Http\Request;
-Route::post('/Pegawai', [App\Http\Controllers\PegawaiAuthController::class, 'Presensi']);
+
+
+Route::get('/Pegawai', [PegawaiAuthController::class, 'showLoginForm'])
+    ->middleware('Pegawai')
+    ->name('Presensi');
+Route::post('/Pegawai', [PegawaiAuthController::class, 'login']);
 
 Route::get('/logout', function () {
     Auth::logout();
@@ -42,6 +43,3 @@ Route::get('/logout', function () {
     request()->session()->regenerateToken();
     return redirect('/Pegawai');
 })->name('logout');
-
-
-

@@ -16,7 +16,7 @@ class PegawaiAuthController extends Controller
     // method untuk menampilkan halaman awal login
     public function showLoginForm()
     {
-        return view('Pegawai');
+        return view('Presensi');
     }
 
     // proses validasi data login
@@ -49,8 +49,8 @@ class PegawaiAuthController extends Controller
     }
 
     // ubah password
-    public function ubahpassword(){
+    public function ubahpassword()
+    {
         return view('ubahpassword');
     }
-
 }
