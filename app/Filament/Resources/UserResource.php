@@ -28,22 +28,22 @@ class UserResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-        ->schema([
-            TextInput::make('name')
+            ->schema([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(100),
                 TextInput::make('email')
                     ->email()
                     ->label('Email address')
                     ->required()
-                    ->maxLength(100),    
+                    ->maxLength(100),
                 TextInput::make('password')
                     ->password()
                     // ->required(fn (Forms\Form $form): bool => $form->getLivewire() instanceof Pages\CreateUser)
                     ->minLength(8)
                     ->same('password_confirmation')
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
+                    ->dehydrated(fn($state) => filled($state))
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state)),
                 TextInput::make('password_confirmation')
                     ->password()
                     ->label('Password Confirmation')
@@ -54,10 +54,11 @@ class UserResource extends Resource
                 Select::make('user_group')
                     ->options([
                         'admin' => 'admin',
-                        'customer' => 'customer',
+                        'Konsumen' => 'Konsumen',
+                        'Pegawai' => 'Pegawai',
                     ])
-                    ->default('customer')
-        ]);
+                    ->default('Konsumen')
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -67,9 +68,9 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('email')->searchable(),
                 BadgeColumn::make('user_group')
-                    ->color(fn ($state) => match ($state) {
+                    ->color(fn($state) => match ($state) {
                         'admin' => 'danger',
-                        'customer' => 'success',
+                        'Konsumen' => 'success',
                         'Pegawai' => 'warning',
                         default => 'success',
                     }),

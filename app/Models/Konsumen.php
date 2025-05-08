@@ -12,9 +12,16 @@ class Konsumen extends Model
     protected $table = 'konsumen';
 
     protected $fillable = [
+        'user_id',
         'nama_konsumen',
-        'jenis_kelamin',      
+        'jenis_kelamin',
         'alamat',
         'no_telp',
+        'email',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
