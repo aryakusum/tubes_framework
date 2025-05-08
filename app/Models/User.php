@@ -26,6 +26,8 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'otp',
+        'otp_expires_at',
     ];
 
     /**
