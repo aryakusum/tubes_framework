@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PegawaiAuthController;
+use Illuminate\Support\Facades\Auth;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +44,8 @@ Route::get('/logout', function () {
     request()->session()->regenerateToken();
     return redirect('/Pegawai');
 })->name('logout');
+
+
 
 
 
