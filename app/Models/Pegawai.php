@@ -20,4 +20,8 @@ class Pegawai extends Model
         'no_telp',
         'tgl_masuk',
     ];
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
 }

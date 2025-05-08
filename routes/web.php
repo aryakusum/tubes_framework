@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PegawaiAuthController;
+use App\Http\Controllers\KonsumenAuthController;
+use App\Http\Controllers\KonsumenController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,3 +46,12 @@ Route::get('/logout', function () {
     request()->session()->regenerateToken();
     return redirect('/Pegawai');
 })->name('logout');
+
+// Login & Register Konsumen
+Route::get('/konsumen/login', [KonsumenAuthController::class, 'showLoginForm'])->name('konsumen.login');
+Route::post('/konsumen/login', [KonsumenAuthController::class, 'login']);
+Route::get('/konsumen/register', [KonsumenAuthController::class, 'showRegisterForm'])->name('konsumen.register');
+Route::post('/konsumen/register', [KonsumenAuthController::class, 'register']);
+Route::get('/konsumen/verify-otp', [KonsumenAuthController::class, 'showVerifyOtpForm'])->name('konsumen.verify-otp');
+Route::post('/konsumen/verify-otp', [KonsumenAuthController::class, 'verifyOtp']);
+Route::post('/konsumen/send-otp', [KonsumenController::class, 'sendOtp']);
