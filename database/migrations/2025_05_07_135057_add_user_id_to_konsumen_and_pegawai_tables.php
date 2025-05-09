@@ -12,11 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('konsumen', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable()->change();
+            // Pengecekan apakah kolom user_id sudah ada
+            if (!Schema::hasColumn('konsumen', 'user_id')) {
+                $table->unsignedBigInteger('user_id')->nullable();
+            }
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
+
         Schema::table('pegawai', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable()->change();
+            // Pengecekan apakah kolom user_id sudah ada
+            if (!Schema::hasColumn('pegawai', 'user_id')) {
+                $table->unsignedBigInteger('user_id')->nullable();
+            }
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
@@ -30,6 +37,7 @@ return new class extends Migration
             $table->dropForeign(['user_id']);
             $table->dropColumn('user_id');
         });
+
         Schema::table('pegawai', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
             $table->dropColumn('user_id');

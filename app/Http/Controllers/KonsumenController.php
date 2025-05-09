@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Konsumen;
+use App\Models\Barang;
+use App\Models\Makanan;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreKonsumenRequest;
 use App\Http\Requests\UpdateKonsumenRequest;
 
@@ -63,4 +66,40 @@ class KonsumenController extends Controller
     {
         //
     }
+
+    /**
+     * tambahkan KonsumenController
+     */
+    public function dashboard()
+    {
+    $makanans = Makanan::latest()->take(6)->get(); // ambil 6 produk terbaru
+    return view('konsumen.dashboard', compact('makanans'));
+    }
+
+    public function addToCart(Request $request)
+{
+    $request->validate([
+        'makanan_id' => 'required|exists:makanans,id',
+        'quantity' => 'required|integer|min:1',
+    ]);
+
+    $cart = session()->get('cart', []);
+    $id = $request->makanan_id;
+
+    if (isset($cart[$id])) {
+        $cart[$id]['quantity'] += $request->quantity;
+    } else {
+        $makanan = \App\Models\Makanan::find($id);
+        $cart[$id] = [
+            'nama' => $makanan->nama_makanan,
+            'harga' => $makanan->harga_makanan,
+            'quantity' => $request->quantity,
+        ];
+    }
+
+    session()->put('cart', $cart);
+
+    return redirect()->back()->with('success', 'Produk ditambahkan ke keranjang!');
+}
+
 }
