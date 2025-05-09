@@ -55,3 +55,10 @@ Route::post('/konsumen/register', [KonsumenAuthController::class, 'register']);
 Route::get('/konsumen/verify-otp', [KonsumenAuthController::class, 'showVerifyOtpForm'])->name('konsumen.verify-otp');
 Route::post('/konsumen/verify-otp', [KonsumenAuthController::class, 'verifyOtp']);
 Route::post('/konsumen/send-otp', [KonsumenController::class, 'sendOtp']);
+Route::get('/konsumen/dashboard', [SomeController::class, 'someMethod']);
+
+Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('konsumen.addToCart');
+Route::get('/dashboard', [KeranjangController::class, 'dashboard']);
+Route::middleware(['auth', 'konsumen'])->group(function () {
+    Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');
+});
