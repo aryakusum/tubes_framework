@@ -29,22 +29,18 @@ Route::get('/', function () {
 });
 // login customer
 
-Route::get('/Pegawai', function () {
-    return view('Presensi');
+Route::middleware(['auth', 'role:Pegawai'])->group(function () {
+    Route::get('/Pegawai', [PegawaiAuthController::class, 'showLoginForm'])
+        ->middleware('Pegawai')
+        ->name('Presensi');
+    Route::post('/Pegawai', [PegawaiAuthController::class, 'Presensi']);
 });
-// tambahan route untuk proses login
-
-
-Route::get('/Pegawai', [PegawaiAuthController::class, 'showLoginForm'])
-    ->middleware('Pegawai')
-    ->name('Presensi');
-Route::post('/Pegawai', [PegawaiAuthController::class, 'login']);
 
 Route::get('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect('/Pegawai');
+    return redirect('/loginpegawai');
 })->name('logout');
 
 // Login & Register Konsumen
@@ -55,3 +51,8 @@ Route::post('/konsumen/register', [KonsumenAuthController::class, 'register']);
 Route::get('/konsumen/verify-otp', [KonsumenAuthController::class, 'showVerifyOtpForm'])->name('konsumen.verify-otp');
 Route::post('/konsumen/verify-otp', [KonsumenAuthController::class, 'verifyOtp']);
 Route::post('/konsumen/send-otp', [KonsumenController::class, 'sendOtp']);
+
+Route::get('/loginpegawai', function () {
+    // Ganti 'login' dengan nama view login yang kamu punya
+    return view('Presensi');
+})->name('loginpegawai');
