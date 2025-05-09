@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PegawaiAuthController;
 use App\Http\Controllers\KonsumenAuthController;
 use App\Http\Controllers\KonsumenController;
+use App\Http\Controllers\KeranjangController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -25,7 +26,7 @@ Route::get('/', function () {
 Route::get('/', function () {
     // return view('welcome');
     // diarahkan ke login customer
-    return view('login');
+    return view('konsumen.login');
 });
 // login customer
 
@@ -56,3 +57,11 @@ Route::get('/loginpegawai', function () {
     // Ganti 'login' dengan nama view login yang kamu punya
     return view('Presensi');
 })->name('loginpegawai');
+Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');
+
+Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('konsumen.addToCart');
+Route::get('/dashboard', [KeranjangController::class, 'dashboard'])->name('dashboard');
+Route::get('/galeri', [KeranjangController::class, 'dashboard'])->name('galeri');
+Route::middleware(['auth', 'konsumen'])->group(function () {
+    Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');
+});
