@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Halaman Dashboard</title>
@@ -10,14 +11,16 @@
             border-radius: 10px;
             padding: 10px;
             margin: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             transition: 0.3s;
         }
+
         .product-card:hover {
             transform: scale(1.02);
         }
     </style>
 </head>
+
 <body>
     {{-- Header --}}
     <nav class="navbar navbar-light bg-light px-4">
@@ -31,20 +34,20 @@
     </nav>
 
     <h2>Produk Terbaru</h2>
-<div style="display: flex; gap: 20px;">
-    @foreach($makanans as $makanan)
-<div class="card">
-    <img src="{{ asset('storage/' . $makanan->gambar) }}" alt="{{ $makanan->nama_makanan }}" width="150">
-    <h4>{{ $makanan->nama_makanan }}</h4>
-    <p>Rp {{ number_format($makanan->harga_makanan, 0, ',', '.') }}</p>
+    <div style="display: flex; gap: 20px;">
+        @foreach($makanan as $makanan)
+        <div class="card">
+            <img src="{{ asset('storage/' . $makanan->gambar) }}" alt="{{ $makanan->nama_makanan }}" width="150">
+            <h4>{{ $makanan->nama_makanan }}</h4>
+            <p>Rp {{ number_format($makanan->harga_makanan, 0, ',', '.') }}</p>
 
-    <!-- Tambah input quantity -->
-    <form action="{{ route('konsumen.addToCart') }}" method="POST">
-        @csrf
-        <input type="hidden" name="makanan_id" value="{{ $makanan->id }}">
-        <label for="quantity">Qty:</label>
-        <input type="number" name="quantity" value="1" min="1" style="width: 60px;">
-        <button type="submit">Add to Cart</button>
-    </form>
-</div>
-@endforeach
+            <!-- Tambah input quantity -->
+            <form action="{{ route('konsumen.addToCart') }}" method="POST">
+                @csrf
+                <input type="hidden" name="makanan_id" value="{{ $makanan->id }}">
+                <label for="quantity">Qty:</label>
+                <input type="number" name="quantity" value="1" min="1" style="width: 60px;">
+                <button type="submit">Add to Cart</button>
+            </form>
+        </div>
+        @endforeach
