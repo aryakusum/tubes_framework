@@ -57,6 +57,11 @@ Route::post('/konsumen/verify-otp', [KonsumenAuthController::class, 'verifyOtp']
 Route::post('/konsumen/send-otp', [KonsumenController::class, 'sendOtp']);
 Route::get('/konsumen/dashboard', [SomeController::class, 'someMethod']);
 
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect()->route('konsumen.login');
+})->name('logout');
+
 Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('konsumen.addToCart');
 Route::get('/dashboard', [KeranjangController::class, 'dashboard']);
 Route::middleware(['auth', 'konsumen'])->group(function () {
