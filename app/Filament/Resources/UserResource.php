@@ -70,11 +70,12 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('email')->searchable(),
-                BadgeColumn::make('user_group')
-                    ->color(fn($state) => match ($state) {
-                        'admin' => 'danger',
+                Tables\Columns\TextColumn::make('user_group')
+                    ->badge()
+                    ->color(fn ($state) => match ($state) {
+                        'admin' => 'warning',
                         'Konsumen' => 'success',
-                        'Pegawai' => 'warning',
+                        'Pegawai' => 'danger',
                         default => 'success',
                     }),
                 Tables\Columns\TextColumn::make('created_at')->searchable(),

@@ -6,6 +6,7 @@ use App\Http\Controllers\KonsumenAuthController;
 use App\Http\Controllers\KonsumenController;
 use App\Http\Controllers\KeranjangController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PresensiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,14 +55,40 @@ Route::post('/konsumen/verify-otp', [KonsumenAuthController::class, 'verifyOtp']
 Route::post('/konsumen/send-otp', [KonsumenController::class, 'sendOtp']);
 
 Route::get('/loginpegawai', function () {
-    // Ganti 'login' dengan nama view login yang kamu punya
     return view('Presensi');
 })->name('loginpegawai');
-Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');
 
+// Route proses login pegawai
+Route::post('/Pegawai', [PegawaiAuthController::class, 'login']);
+
+// Routes for Pegawai
+Route::middleware(['auth', 'Pegawai'])->group(function () {
+    Route::get('/Pegawai', [PegawaiAuthController::class, 'showLoginForm'])
+        ->middleware('Pegawai')
+        ->name('Presensi');
+    Route::post('/Pegawai', [PegawaiAuthController::class, 'login']);
+    Route::get('/dashboard-pegawai', function () {
+        $presensis = \App\Models\Presensi::orderBy('tanggal', 'desc')->get();
+        return view('dashboard-pegawai', compact('presensis'));
+    })->name('dashboard.pegawai');
+    Route::get('/pegawai/tambah-presensi', [PresensiController::class, 'create'])->name('presensi.create');
+    Route::post('/pegawai/tambah-presensi', [PresensiController::class, 'store'])->name('presensi.store');
+    Route::get('/dashboard-pegawai-keluar', function () {
+        $presensis = \App\Models\Presensi::orderBy('tanggal', 'desc')->get();
+        return view('dashboard-pegawai-keluar', compact('presensis'));
+    })->name('dashboard.pegawai.keluar');
+});
+
+Route::resource('presensi', App\Http\Controllers\PresensiController::class);
+Route::post('/presensi/keluar/{id}', [PresensiController::class, 'updateJamKeluar'])->name('presensi.keluar');
+Route::post('/presensi/mulai-bekerja/{id}', [PresensiController::class, 'mulaiBekerja'])->name('presensi.mulai_bekerja');
+
+// Routes for Konsumen
+Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');
 Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('konsumen.addToCart');
 Route::get('/dashboard', [KeranjangController::class, 'dashboard'])->name('dashboard');
 Route::get('/galeri', [KeranjangController::class, 'dashboard'])->name('galeri');
+
 Route::middleware(['auth', 'konsumen'])->group(function () {
     Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');
 });
