@@ -22,7 +22,15 @@ class MakananResource extends FilamentResource
 {
     protected static ?string $model = Makanan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cake';
+
+    protected static ?string $navigationLabel = 'Data Makanan';
+
+    protected static ?string $modelLabel = 'Makanan';
+
+    protected static ?string $pluralModelLabel = 'Makanan';
+
+    protected static ?string $navigationGroup = 'Master Data';
 
     public static function form(Form $form): Form
     {

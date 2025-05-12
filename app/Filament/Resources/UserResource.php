@@ -25,39 +25,42 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
+    protected static ?string $navigationGroup = 'Master Data';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('name')
-                        ->required()
-                        ->maxLength(100),
-                    TextInput::make('email')
-                        ->email()
-                        ->label('Email address')
-                        ->required()
-                        ->maxLength(100),    
-                    TextInput::make('password')
-                        ->password()
-                        // ->required(fn (Forms\Form $form): bool => $form->getLivewire() instanceof Pages\CreateUser)
-                        ->minLength(8)
-                        ->same('password_confirmation')
-                        ->dehydrated(fn ($state) => filled($state))
-                        ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
-                    TextInput::make('password_confirmation')
-                        ->password()
-                        ->label('Password Confirmation')
-                        // ->required(fn (Forms\Form $form): bool => $form->getLivewire() instanceof Pages\CreateUser) // ✅ Perbaikan
-                        ->minLength(8)
-                        ->minlength(8)
-                        ->dehydrated(false),
-                    Select::make('user_group')
-                        ->options([
-                            'admin' => 'admin',
-                            'customer' => 'customer',
-                            'Pegawai' => 'Pegawai',
-                        ])
-                        ->default('customer')
+                    ->required()
+                    ->maxLength(100),
+                TextInput::make('email')
+                    ->email()
+                    ->label('Email address')
+                    ->required()
+                    ->maxLength(100),
+                TextInput::make('password')
+                    ->password()
+                    // ->required(fn (Forms\Form $form): bool => $form->getLivewire() instanceof Pages\CreateUser)
+                    ->minLength(8)
+                    ->same('password_confirmation')
+                    ->dehydrated(fn($state) => filled($state))
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state)),
+                TextInput::make('password_confirmation')
+                    ->password()
+                    ->label('Password Confirmation')
+                    // ->required(fn (Forms\Form $form): bool => $form->getLivewire() instanceof Pages\CreateUser) // ✅ Perbaikan
+                    ->minLength(8)
+                    ->minlength(8)
+                    ->dehydrated(false),
+                Select::make('user_group')
+                    ->options([
+                        'admin' => 'admin',
+                        'Konsumen' => 'Konsumen',
+                        'Pegawai' => 'Pegawai',
+                    ])
+                    ->default('Konsumen')
+                    ->required(),
             ]);
     }
 
@@ -71,7 +74,7 @@ class UserResource extends Resource
                     ->badge()
                     ->color(fn ($state) => match ($state) {
                         'admin' => 'warning',
-                        'customer' => 'success',
+                        'Konsumen' => 'success',
                         'Pegawai' => 'danger',
                         default => 'success',
                     }),

@@ -4,9 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PegawaiAuthController;
 use App\Http\Controllers\KonsumenAuthController;
 use App\Http\Controllers\KonsumenController;
+use App\Http\Controllers\KeranjangController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PresensiController;
 
 /*
@@ -28,28 +27,18 @@ Route::get('/', function () {
 Route::get('/', function () {
     // return view('welcome');
     // diarahkan ke login customer
-    return view('login');
+    return view('konsumen.login');
 });
 // login customer
 
-Route::middleware(['auth', 'Pegawai'])->group(function () {
+Route::middleware(['auth', 'role:Pegawai'])->group(function () {
     Route::get('/Pegawai', [PegawaiAuthController::class, 'showLoginForm'])
         ->middleware('Pegawai')
         ->name('Presensi');
-    Route::post('/Pegawai', [PegawaiAuthController::class, 'login']);
-    Route::get('/dashboard-pegawai', function () {
-        $presensis = \App\Models\Presensi::orderBy('tanggal', 'desc')->get();
-        return view('dashboard-pegawai', compact('presensis'));
-    })->name('dashboard.pegawai');
-    Route::get('/pegawai/tambah-presensi', [PresensiController::class, 'create'])->name('presensi.create');
-    Route::post('/pegawai/tambah-presensi', [PresensiController::class, 'store'])->name('presensi.store');
-    Route::get('/dashboard-pegawai-keluar', function () {
-        $presensis = \App\Models\Presensi::orderBy('tanggal', 'desc')->get();
-        return view('dashboard-pegawai-keluar', compact('presensis'));
-    })->name('dashboard.pegawai.keluar');
+    Route::post('/Pegawai', [PegawaiAuthController::class, 'Presensi']);
 });
 
-Route::post('/logout', function () {
+Route::get('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
@@ -72,17 +61,34 @@ Route::get('/loginpegawai', function () {
 // Route proses login pegawai
 Route::post('/Pegawai', [PegawaiAuthController::class, 'login']);
 
-// Route dashboard pegawai, hanya untuk yang sudah login dan user_group Pegawai
-// Route::middleware(['auth', 'Pegawai'])->group(function () {
-//     Route::get('/dashboard-pegawai', function () {
-//         return view('dashboard-pegawai');
-//     })->name('dashboard.pegawai');
-// });
+// Routes for Pegawai
+Route::middleware(['auth', 'Pegawai'])->group(function () {
+    Route::get('/Pegawai', [PegawaiAuthController::class, 'showLoginForm'])
+        ->middleware('Pegawai')
+        ->name('Presensi');
+    Route::post('/Pegawai', [PegawaiAuthController::class, 'login']);
+    Route::get('/dashboard-pegawai', function () {
+        $presensis = \App\Models\Presensi::orderBy('tanggal', 'desc')->get();
+        return view('dashboard-pegawai', compact('presensis'));
+    })->name('dashboard.pegawai');
+    Route::get('/pegawai/tambah-presensi', [PresensiController::class, 'create'])->name('presensi.create');
+    Route::post('/pegawai/tambah-presensi', [PresensiController::class, 'store'])->name('presensi.store');
+    Route::get('/dashboard-pegawai-keluar', function () {
+        $presensis = \App\Models\Presensi::orderBy('tanggal', 'desc')->get();
+        return view('dashboard-pegawai-keluar', compact('presensis'));
+    })->name('dashboard.pegawai.keluar');
+});
 
 Route::resource('presensi', App\Http\Controllers\PresensiController::class);
-
 Route::post('/presensi/keluar/{id}', [PresensiController::class, 'updateJamKeluar'])->name('presensi.keluar');
-
 Route::post('/presensi/mulai-bekerja/{id}', [PresensiController::class, 'mulaiBekerja'])->name('presensi.mulai_bekerja');
 
+// Routes for Konsumen
+Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');
+Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('konsumen.addToCart');
+Route::get('/dashboard', [KeranjangController::class, 'dashboard'])->name('dashboard');
+Route::get('/galeri', [KeranjangController::class, 'dashboard'])->name('galeri');
 
+Route::middleware(['auth', 'konsumen'])->group(function () {
+    Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');
+});

@@ -18,7 +18,6 @@ class Makanan extends Model
         'gambar'
     ];
 
-
     public function getFormattedPriceAttribute()
     {
         return 'Rp ' . number_format($this->harga_makanan, 0, ',', '.');

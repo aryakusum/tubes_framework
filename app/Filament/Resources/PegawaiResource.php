@@ -30,56 +30,57 @@ class PegawaiResource extends Resource
 {
     protected static ?string $model = Pegawai::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $navigationLabel = 'Data Pegawai';
+
+    protected static ?string $modelLabel = 'Pegawai';
+
+    protected static ?string $pluralModelLabel = 'Pegawai';
+
+    protected static ?string $navigationGroup = 'Master Data';
 
     public static function form(Form $form): Form
     {
         return $form
-        ->schema([
-            Grid::make(1) // Membuat hanya 1 kolom
             ->schema([
-                TextInput::make('nama_pegawai')
-                    ->label('Nama Pegawai')
-                    ->required()
-                    ->placeholder('Masukkan nama pegawai')
-                ,
-                Radio::make('jenis_kelamin')
-                    ->label('Jenis Kelamin')
-                    ->options([
-                        'Laki-laki' => 'Laki-laki',
-                        'Perempuan' => 'Perempuan',
-                    ])
-                    ->required()
-                ,
-                Radio::make('jenis_Pegawai')
-                    ->label('Jenis Pegawai')
-                    ->options([
-                        'Pegawai' => 'Pegawai',
-                        'Kurir' => 'Kurir',
-                    ])
-                    ->required()
-                ,
-                TextInput::make('jabatan')
-                    ->label('Jabatan')
-                    ->required()
-                    ->placeholder('Masukkan jabatan')
-                ,
-                TextInput::make('alamat')
-                    ->label('Alamat')
-                    ->required()
-                    ->placeholder('Masukkan alamat')
-                ,
-                TextInput::make('no_telp')
-                    ->label('No Telp')
-                    ->required()
-                    ->placeholder('Masukkan no telp')
-                ,
-                DatePicker::make('tgl_masuk')
-                    ->label('Tanggal masuk')
-                    ->required()
-                ,
-            ]),
-        ]);
+                Grid::make(1) // Membuat hanya 1 kolom
+                    ->schema([
+                        TextInput::make('nama_pegawai')
+                            ->label('Nama Pegawai')
+                            ->required()
+                            ->placeholder('Masukkan nama pegawai'),
+                        Radio::make('jenis_kelamin')
+                            ->label('Jenis Kelamin')
+                            ->options([
+                                'Laki-laki' => 'Laki-laki',
+                                'Perempuan' => 'Perempuan',
+                            ])
+                            ->required(),
+                        Radio::make('jenis_Pegawai')
+                            ->label('Jenis Pegawai')
+                            ->options([
+                                'Pegawai' => 'Pegawai',
+                                'Kurir' => 'Kurir',
+                            ])
+                            ->required(),
+                        TextInput::make('jabatan')
+                            ->label('Jabatan')
+                            ->required()
+                            ->placeholder('Masukkan jabatan'),
+                        TextInput::make('alamat')
+                            ->label('Alamat')
+                            ->required()
+                            ->placeholder('Masukkan alamat'),
+                        TextInput::make('no_telp')
+                            ->label('No Telp')
+                            ->required()
+                            ->placeholder('Masukkan no telp'),
+                        DatePicker::make('tgl_masuk')
+                            ->label('Tanggal masuk')
+                            ->required(),
+                    ]),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -87,34 +88,34 @@ class PegawaiResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nama_pegawai')
-                ->label('Nama Pegawai')
-                ->searchable()
-                ->sortable(),
+                    ->label('Nama Pegawai')
+                    ->searchable()
+                    ->sortable(),
 
-            TextColumn::make('jenis_kelamin')
-                ->label('Jenis Kelamin')
-                ->sortable(),
+                TextColumn::make('jenis_kelamin')
+                    ->label('Jenis Kelamin')
+                    ->sortable(),
 
                 TextColumn::make('jenis_Pegawai')
-                ->label('Jenis Pegawai')
-                ->sortable()
-                ->searchable(), 
-            
-            TextColumn::make('jabatan')
-                ->label('Jabatan')
-                ->sortable(),
+                    ->label('Jenis Pegawai')
+                    ->sortable()
+                    ->searchable(),
 
-            TextColumn::make('alamat')
-                ->label('Alamat')
-                ->sortable(),
+                TextColumn::make('jabatan')
+                    ->label('Jabatan')
+                    ->sortable(),
 
-            TextColumn::make('no_telp')
-                ->label('No Telp')
-                ->sortable(),
+                TextColumn::make('alamat')
+                    ->label('Alamat')
+                    ->sortable(),
 
-            TextColumn::make('tgl_masuk')
-                ->label('Tanggal Masuk')
-                ->sortable(),
+                TextColumn::make('no_telp')
+                    ->label('No Telp')
+                    ->sortable(),
+
+                TextColumn::make('tgl_masuk')
+                    ->label('Tanggal Masuk')
+                    ->sortable(),
             ])
             ->filters([
                 //

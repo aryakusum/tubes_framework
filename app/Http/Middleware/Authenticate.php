@@ -18,5 +18,5 @@ class Authenticate extends Middleware
         }
         // Default redirect ke loginpegawai
         return route('loginpegawai');
-    }   
+    }
 }
