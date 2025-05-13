@@ -33,7 +33,7 @@
 {{-- Header --}}
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-4">
     <a class="navbar-brand" href="#">
-        <span>FOODMART</span> <span>MR BANGKOK</span>
+        <span>FOODMART</span> <span>MR MANGKOK</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
         <span class="navbar-toggler-icon"></span>
