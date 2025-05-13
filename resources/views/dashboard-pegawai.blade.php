@@ -15,7 +15,7 @@
             <img src="https://ui-avatars.com/api/?name={{ urlencode($pegawai->nama_pegawai) }}" alt="Profile" class="w-20 h-20 rounded-full mb-2">
             <div class="text-center">
                 <div class="font-bold">{{ $pegawai->nama_pegawai }}</div>
-                <div class="text-sm text-gray-400">{{ $pegawai->user->email }}</div>
+                <div class="text-sm text-gray-400">{{ auth()->user()->email }}</div>
             </div>
         </div>
         <nav class="flex-1">
@@ -72,7 +72,7 @@
                             <td class="px-3 py-2">{{ $loop->iteration }}</td>
                             <td class="px-3 py-2">{{ $presensi->id_pegawai }}</td>
                             <td class="px-3 py-2">{{ $pegawai->nama_pegawai }}</td>
-                            <td class="px-3 py-2">{{ $pegawai->user->email }}</td>
+                            <td class="px-3 py-2">{{ auth()->user()->email }}</td>
                             <td class="px-3 py-2">{{ $presensi->tanggal }}</td>
                             <td class="px-3 py-2">{{ $presensi->jam_masuk }}</td>
                             <td class="px-3 py-2">

@@ -41,28 +41,24 @@ Route::post('/logout', function () {
 })->name('logout');
 
 // Pegawai Routes
-Route::get('/loginpegawai', function () {
-    return view('Presensi');
-})->name('loginpegawai');
+Route::get('/loginpegawai', [PegawaiAuthController::class, 'showLoginForm'])->name('loginpegawai');
+Route::post('/loginpegawai', [PegawaiAuthController::class, 'login'])->name('pegawai.login');
 
-// Route proses login pegawai
-Route::post('/Pegawai', [PegawaiAuthController::class, 'login']);
-
-// Routes for Pegawai
+// Protected Pegawai Routes
 Route::middleware(['auth', 'Pegawai'])->group(function () {
-    Route::get('/Pegawai', [PegawaiAuthController::class, 'showLoginForm'])
-        ->middleware('Pegawai')
-        ->name('Presensi');
-    Route::post('/Pegawai', [PegawaiAuthController::class, 'login']);
     Route::get('/dashboard-pegawai', function () {
         $presensis = \App\Models\Presensi::orderBy('tanggal', 'desc')->get();
-        return view('dashboard-pegawai', compact('presensis'));
+        $pegawai = auth()->user()->pegawai;
+        return view('dashboard-pegawai', compact('presensis', 'pegawai'));
     })->name('dashboard.pegawai');
+
     Route::get('/pegawai/tambah-presensi', [PresensiController::class, 'create'])->name('presensi.create');
     Route::post('/pegawai/tambah-presensi', [PresensiController::class, 'store'])->name('presensi.store');
+
     Route::get('/dashboard-pegawai-keluar', function () {
         $presensis = \App\Models\Presensi::orderBy('tanggal', 'desc')->get();
-        return view('dashboard-pegawai-keluar', compact('presensis'));
+        $pegawai = auth()->user()->pegawai;
+        return view('dashboard-pegawai-keluar', compact('presensis', 'pegawai'));
     })->name('dashboard.pegawai.keluar');
 });
 

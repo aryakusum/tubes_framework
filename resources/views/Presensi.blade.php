@@ -21,7 +21,7 @@
         </div>
         @endif
 
-        <form method="POST" action="{{ url('/Pegawai') }}">
+        <form method="POST" action="{{ route('pegawai.login') }}">
             @csrf
             <div class="mb-4">
                 <label class="block text-gray-700 mb-1" for="email">Email</label>

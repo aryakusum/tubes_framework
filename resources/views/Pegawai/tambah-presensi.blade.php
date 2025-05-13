@@ -45,6 +45,21 @@
         <!-- Form -->
         <div class="max-w-lg mx-auto mt-10 bg-white p-6 rounded shadow">
             <h2 class="text-xl font-bold mb-4">Tambah Presensi Pegawai</h2>
+            @if ($errors->any())
+            <div class="mb-4 text-red-600 bg-red-100 border border-red-300 rounded px-4 py-2">
+                {{ $errors->first() }}
+            </div>
+            @endif
+            @if (session('error'))
+            <div class="mb-4 text-red-600 bg-red-100 border border-red-300 rounded px-4 py-2">
+                {{ session('error') }}
+            </div>
+            @endif
+            @if (session('success'))
+            <div class="mb-4 text-green-600 bg-green-100 border border-green-300 rounded px-4 py-2">
+                {{ session('success') }}
+            </div>
+            @endif
             <form action="{{ route('presensi.store') }}" method="POST">
                 @csrf
                 <div class="mb-3">

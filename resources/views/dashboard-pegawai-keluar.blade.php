@@ -12,10 +12,10 @@
     <!-- Sidebar -->
     <aside class="w-64 bg-gray-800 text-white flex flex-col py-8 px-4 min-h-screen">
         <div class="flex flex-col items-center mb-8">
-            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}" alt="Profile" class="w-20 h-20 rounded-full mb-2">
+            <img src="https://ui-avatars.com/api/?name={{ urlencode($pegawai->nama_pegawai) }}" alt="Profile" class="w-20 h-20 rounded-full mb-2">
             <div class="text-center">
-                <div class="font-bold">{{ Auth::user()->name }}</div>
-                <div class="text-sm text-gray-400">{{ Auth::user()->email }}</div>
+                <div class="font-bold">{{ $pegawai->nama_pegawai }}</div>
+                <div class="text-sm text-gray-400">{{ $pegawai->user->email }}</div>
             </div>
         </div>
         <nav class="flex-1">
