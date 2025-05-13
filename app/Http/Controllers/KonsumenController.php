@@ -72,34 +72,33 @@ class KonsumenController extends Controller
      */
     public function dashboard()
     {
-    $makanans = Makanan::latest()->take(6)->get(); // ambil 6 produk terbaru
-    return view('konsumen.dashboard', compact('makanans'));
+        $makanan = Makanan::latest()->take(6)->get(); // ambil 6 produk terbaru
+        return view('konsumen.dashboard', compact('makanan'));
     }
 
     public function addToCart(Request $request)
-{
-    $request->validate([
-        'makanan_id' => 'required|exists:makanans,id',
-        'quantity' => 'required|integer|min:1',
-    ]);
+    {
+        $request->validate([
+            'makanan_id' => 'required|exists:makanan,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
 
-    $cart = session()->get('cart', []);
-    $id = $request->makanan_id;
+        $cart = session()->get('cart', []);
+        $id = $request->makanan_id;
 
-    if (isset($cart[$id])) {
-        $cart[$id]['quantity'] += $request->quantity;
-    } else {
-        $makanan = \App\Models\Makanan::find($id);
-        $cart[$id] = [
-            'nama' => $makanan->nama_makanan,
-            'harga' => $makanan->harga_makanan,
-            'quantity' => $request->quantity,
-        ];
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity'] += $request->quantity;
+        } else {
+            $makanan = Makanan::find($id);
+            $cart[$id] = [
+                'nama' => $makanan->nama_makanan,
+                'harga' => $makanan->harga_makanan,
+                'quantity' => $request->quantity,
+            ];
+        }
+
+        session()->put('cart', $cart);
+
+        return redirect()->back()->with('success', 'Produk ditambahkan ke keranjang!');
     }
-
-    session()->put('cart', $cart);
-
-    return redirect()->back()->with('success', 'Produk ditambahkan ke keranjang!');
-}
-
 }
