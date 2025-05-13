@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <title>Halaman Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
             background: linear-gradient(to right, #d7f5f5, #e1f3ff);
@@ -45,7 +48,7 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <form class="d-flex ms-auto my-2 my-lg-0">
+            <form class="d-flex ms-auto my-2 my-lg-0 me-3">
                 <select class="form-select me-2">
                     <option>All Categories</option>
                     <option>Makanan</option>
@@ -54,6 +57,21 @@
                 </select>
                 <input class="form-control me-2" type="search" placeholder="Search for more than 20,000 products">
             </form>
+
+            <!-- Icon Profile dan Dropdown -->
+            <div class="dropdown">
+                <a class="btn dropdown-toggle d-flex align-items-center" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://img.icons8.com/ios-glyphs/30/000000/user--v1.png" alt="Profile" class="rounded-circle" width="30" height="30" />
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="dropdown-item">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
@@ -92,6 +110,7 @@
         </div>
     </div>
 
+    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
