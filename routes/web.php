@@ -12,16 +12,9 @@ use App\Http\Controllers\PresensiController;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
 Route::get('/', function () {
-    // return view('welcome');
-    // diarahkan ke login customer
     return view('konsumen.login');
 });
 
@@ -37,7 +30,7 @@ Route::post('/konsumen/send-otp', [KonsumenController::class, 'sendOtp']);
 // Logout Route
 Route::post('/logout', function () {
     Auth::logout();
-    return redirect()->route('konsumen.login');
+    return redirect('konsumen/login');
 })->name('logout');
 
 // Pegawai Routes
@@ -67,10 +60,17 @@ Route::resource('presensi', App\Http\Controllers\PresensiController::class);
 Route::post('/presensi/keluar/{id}', [PresensiController::class, 'updateJamKeluar'])->name('presensi.keluar');
 Route::post('/presensi/mulai-bekerja/{id}', [PresensiController::class, 'mulaiBekerja'])->name('presensi.mulai_bekerja');
 
-// Konsumen Routes
+// Konsumen & Keranjang Routes
 Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('konsumen.addToCart');
 Route::get('/dashboard', [KeranjangController::class, 'dashboard'])->name('dashboard');
 Route::get('/galeri', [KeranjangController::class, 'dashboard'])->name('galeri');
+Route::get('/konsumen/keranjang', [KonsumenController::class, 'keranjang'])->name('konsumen.keranjang');
+
+// Jika ingin fitur cart lengkap, tambahkan route berikut (pastikan controller dan method ada):
+// Route::get('/keranjang', [KeranjangController::class, 'viewCart'])->name('cart.view');
+// Route::post('/keranjang/{id}/decrease', [KeranjangController::class, 'decreaseQuantity'])->name('cart.decrease');
+// Route::post('/keranjang/{id}/increase', [KeranjangController::class, 'increaseQuantity'])->name('cart.increase');
+// Route::get('/checkout', [KeranjangController::class, 'checkout'])->name('checkout');
 
 Route::middleware(['auth', 'konsumen'])->group(function () {
     Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');

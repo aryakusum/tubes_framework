@@ -22,4 +22,10 @@ class Makanan extends Model
     {
         return 'Rp ' . number_format($this->harga_makanan, 0, ',', '.');
     }
+
+    // Relasi dengan tabel relasi many to many nya
+    public function penjualanMakanan()
+    {
+        return $this->hasMany(PenjualanMakanan::class, 'makanan_id');
+    }
 }

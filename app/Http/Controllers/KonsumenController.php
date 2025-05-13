@@ -68,7 +68,15 @@ class KonsumenController extends Controller
     }
 
     /**
-     * tambahkan KonsumenController
+     * Tampilkan halaman keranjang
+     */
+    public function viewCart()
+    {
+        return view('konsumen.cart');
+    }
+
+    /**
+     * Dashboard konsumen, tampilkan 6 produk terbaru
      */
     public function dashboard()
     {
@@ -76,6 +84,9 @@ class KonsumenController extends Controller
         return view('konsumen.dashboard', compact('makanan'));
     }
 
+    /**
+     * Tambah produk ke keranjang
+     */
     public function addToCart(Request $request)
     {
         $request->validate([
@@ -89,7 +100,7 @@ class KonsumenController extends Controller
         if (isset($cart[$id])) {
             $cart[$id]['quantity'] += $request->quantity;
         } else {
-            $makanan = Makanan::find($id);
+            $makanan = \App\Models\Makanan::find($id);
             $cart[$id] = [
                 'nama' => $makanan->nama_makanan,
                 'harga' => $makanan->harga_makanan,
