@@ -29,7 +29,7 @@ class PegawaiAuthController extends Controller
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'user_group' => 'Pegawai'])) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard-pegawai');
+            return redirect()->route('dashboard.pegawai');
         }
 
         return back()->withErrors([
@@ -44,7 +44,7 @@ class PegawaiAuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/Pegawai');
+        return redirect()->route('loginpegawai');
     }
 
     // ubah password

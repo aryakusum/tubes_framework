@@ -8,6 +8,8 @@ use App\Models\Pegawai;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PresensiConfirmationMail;
 
 class PresensiController extends Controller
 {
@@ -53,7 +55,7 @@ class PresensiController extends Controller
             return redirect()->back()->with('error', 'Presensi untuk tanggal ini sudah ada!');
         }
 
-        Presensi::create([
+        $presensi = Presensi::create([
             'id_pegawai' => $pegawai->id,
             'nama' => $pegawai->nama_pegawai,
             'tanggal' => $request->tanggal,
@@ -61,6 +63,9 @@ class PresensiController extends Controller
             'status' => $request->status,
             'keterangan' => $request->keterangan,
         ]);
+
+        // Kirim email konfirmasi presensi masuk
+        Mail::to($pegawai->user->email)->send(new PresensiConfirmationMail($presensi, $pegawai, 'masuk'));
 
         return redirect()->route('dashboard.pegawai')->with('success', 'Presensi berhasil ditambahkan!');
     }
@@ -175,6 +180,9 @@ class PresensiController extends Controller
             'keterangan' => 'Selesai Bekerja',
             'nama' => $pegawai->nama_pegawai . ' (' . $pegawai->user->email . ')'
         ]);
+
+        // Kirim email konfirmasi presensi keluar
+        Mail::to($pegawai->user->email)->send(new PresensiConfirmationMail($presensi, $pegawai, 'keluar'));
 
         return redirect()->route('dashboard.pegawai.keluar')->with('success', 'Jam keluar berhasil disimpan!');
     }
