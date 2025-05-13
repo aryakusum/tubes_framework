@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PegawaiAuthController;
 use App\Http\Controllers\KonsumenAuthController;
 use App\Http\Controllers\KonsumenController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -59,10 +60,19 @@ Route::get('/konsumen/dashboard', [SomeController::class, 'someMethod']);
 
 Route::post('/logout', function () {
     Auth::logout();
-    return redirect()->route('konsumen.login');
+    return redirect('konsumen/login');
 })->name('logout');
 
-Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('konsumen.addToCart');
+Route::get('/keranjang', [CartController::class, 'viewCart'])->name('cart.view');
+// Route untuk mengurangi quantity produk di keranjang
+Route::post('/keranjang/{id}/decrease', [CartController::class, 'decreaseQuantity'])->name('cart.decrease');
+// Route untuk menambah quantity produk di keranjang
+Route::post('/keranjang/{id}/increase', [CartController::class, 'increaseQuantity'])->name('cart.increase');
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+
+Route::get('/keranjang', [KonsumenController::class, 'viewCart'])->name('cart.view');
+Route::get('/konsumen/keranjang', [KonsumenController::class, 'keranjang'])->name('konsumen.keranjang');
+Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('add.to.cart');
 Route::get('/dashboard', [KeranjangController::class, 'dashboard']);
 Route::middleware(['auth', 'konsumen'])->group(function () {
     Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');

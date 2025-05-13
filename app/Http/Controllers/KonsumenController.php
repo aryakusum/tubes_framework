@@ -70,16 +70,24 @@ class KonsumenController extends Controller
     /**
      * tambahkan KonsumenController
      */
+    public function viewCart()
+    {
+    return view('konsumen.cart');
+    }
+
+    /**
+     * tambahkan KonsumenController
+     */
     public function dashboard()
     {
-    $makanans = Makanan::latest()->take(6)->get(); // ambil 6 produk terbaru
-    return view('konsumen.dashboard', compact('makanans'));
+    $makanan = Makanan::latest()->take(6)->get(); // ambil 6 produk terbaru
+    return view('konsumen.dashboard', compact('makanan'));
     }
 
     public function addToCart(Request $request)
 {
     $request->validate([
-        'makanan_id' => 'required|exists:makanans,id',
+        'makanan_id' => 'required|exists:makanan,id',
         'quantity' => 'required|integer|min:1',
     ]);
 
