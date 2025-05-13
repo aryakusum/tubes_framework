@@ -55,6 +55,11 @@ class MakananResource extends FilamentResource
             TextInput::make('nama_makanan')
                 ->required()
                 ->maxLength(255),
+            Toggle::make('halal')
+                ->required()
+                ->default(true)
+                ->label('Halal')
+                ->helperText('Apakah makanan ini halal?'),
             Textarea::make('deskripsi_makanan')
                 ->required()
                 ->rows(3)
@@ -83,6 +88,11 @@ class MakananResource extends FilamentResource
             TextColumn::make('nama_makanan')
                 ->searchable()
                 ->sortable(),
+            IconColumn::make('halal')
+                ->boolean()
+                ->trueIcon('heroicon-o-check-circle')
+                ->falseIcon('heroicon-o-x-circle')
+                ->label('Status Halal'),
             TextColumn::make('deskripsi_makanan')
                 ->searchable()
                 ->wrap()

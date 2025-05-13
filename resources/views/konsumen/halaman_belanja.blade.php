@@ -83,7 +83,7 @@
     <div class="container py-4">
         <h2 class="mb-4">Produk Terbaru</h2>
         <div class="row">
-            @foreach($makanan as $makanan)
+            @foreach($makanans as $makanan)
             <div class="col-md-3 mb-4">
                 <div class="card product-card h-100 shadow-sm">
                     <img src="{{ asset('storage/' . $makanan->gambar) }}" class="card-img-top" alt="{{ $makanan->nama_makanan }}" style="height: 150px; object-fit: contain;">

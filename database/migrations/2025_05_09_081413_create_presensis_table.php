@@ -13,12 +13,19 @@ return new class extends Migration
     {
         Schema::create('presensi', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('id_pegawai')->constrained('pegawai')->onDelete('cascade');
             $table->string('nama');
             $table->date('tanggal');
-            $table->string('status');
+            $table->time('jam_masuk')->nullable();
+            $table->time('jam_keluar')->nullable();
+            $table->enum('status', ['Hadir', 'Izin', 'Sakit', 'Alpha'])->default('Hadir');
             $table->string('keterangan')->nullable();
             $table->timestamp('mulai_bekerja')->nullable();
             $table->timestamps();
+
+            // Add composite indexes for faster queries
+            $table->index(['id_pegawai', 'tanggal', 'status']);
+            $table->index(['tanggal', 'status']);
         });
     }
 

@@ -25,6 +25,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use Filament\Forms\Components\Grid;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class PegawaiResource extends Resource
 {
@@ -32,7 +34,7 @@ class PegawaiResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?string $navigationLabel = 'Data Pegawai';
+    protected static ?string $navigationLabel = 'Pegawai';
 
     protected static ?string $modelLabel = 'Pegawai';
 
@@ -44,42 +46,78 @@ class PegawaiResource extends Resource
     {
         return $form
             ->schema([
-                Grid::make(1) // Membuat hanya 1 kolom
-                    ->schema([
-                        TextInput::make('nama_pegawai')
-                            ->label('Nama Pegawai')
+                Forms\Components\Select::make('user_id')
+                    ->label('Akun User')
+                    ->options(
+                        User::where('user_group', 'pegawai')
+                            ->whereNotIn('id', function ($query) {
+                                $query->select('user_id')
+                                    ->from('pegawai')
+                                    ->whereNotNull('user_id');
+                            })
+                            ->pluck('email', 'id')
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
                             ->required()
-                            ->placeholder('Masukkan nama pegawai'),
-                        Radio::make('jenis_kelamin')
-                            ->label('Jenis Kelamin')
-                            ->options([
-                                'Laki-laki' => 'Laki-laki',
-                                'Perempuan' => 'Perempuan',
-                            ])
-                            ->required(),
-                        Radio::make('jenis_Pegawai')
-                            ->label('Jenis Pegawai')
-                            ->options([
-                                'Pegawai' => 'Pegawai',
-                                'Kurir' => 'Kurir',
-                            ])
-                            ->required(),
-                        TextInput::make('jabatan')
-                            ->label('Jabatan')
+                            ->maxLength(255)
+                            ->label('Nama'),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
                             ->required()
-                            ->placeholder('Masukkan jabatan'),
-                        TextInput::make('alamat')
-                            ->label('Alamat')
+                            ->maxLength(255)
+                            ->unique('users', 'email'),
+                        Forms\Components\TextInput::make('password')
+                            ->password()
                             ->required()
-                            ->placeholder('Masukkan alamat'),
-                        TextInput::make('no_telp')
-                            ->label('No Telp')
-                            ->required()
-                            ->placeholder('Masukkan no telp'),
-                        DatePicker::make('tgl_masuk')
-                            ->label('Tanggal masuk')
-                            ->required(),
-                    ]),
+                            ->maxLength(255),
+                        Forms\Components\Hidden::make('user_group')
+                            ->default('pegawai'),
+                    ])
+                    ->createOptionUsing(function (array $data) {
+                        return User::create([
+                            'name' => $data['name'],
+                            'email' => $data['email'],
+                            'password' => Hash::make($data['password']),
+                            'user_group' => 'Pegawai',
+                        ])->id;
+                    })
+                    ->required(),
+                Forms\Components\TextInput::make('nama_pegawai')
+                    ->required()
+                    ->maxLength(255)
+                    ->label('Nama Pegawai'),
+                Forms\Components\Select::make('jenis_kelamin')
+                    ->options([
+                        'Laki-laki' => 'Laki-laki',
+                        'Perempuan' => 'Perempuan',
+                    ])
+                    ->required()
+                    ->label('Jenis Kelamin'),
+                Forms\Components\Select::make('jenis_Pegawai')
+                    ->options([
+                        'Pegawai' => 'Pegawai',
+                        'Kurir' => 'Kurir',
+                    ])
+                    ->required()
+                    ->label('Jenis Pegawai'),
+                Forms\Components\TextInput::make('jabatan')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('alamat')
+                    ->required()
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('no_telp')
+                    ->tel()
+                    ->required()
+                    ->maxLength(255)
+                    ->label('No. Telepon'),
+                Forms\Components\DatePicker::make('tgl_masuk')
+                    ->required()
+                    ->label('Tanggal Masuk'),
             ]);
     }
 
@@ -87,41 +125,42 @@ class PegawaiResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nama_pegawai')
-                    ->label('Nama Pegawai')
+                Tables\Columns\TextColumn::make('nama_pegawai')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Nama Pegawai'),
+                Tables\Columns\TextColumn::make('user.email')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Email'),
+                Tables\Columns\TextColumn::make('jenis_kelamin')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Jenis Kelamin'),
+                Tables\Columns\TextColumn::make('jenis_Pegawai')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Jenis Pegawai'),
+                Tables\Columns\TextColumn::make('jabatan')
                     ->searchable()
                     ->sortable(),
-
-                TextColumn::make('jenis_kelamin')
-                    ->label('Jenis Kelamin')
-                    ->sortable(),
-
-                TextColumn::make('jenis_Pegawai')
-                    ->label('Jenis Pegawai')
+                Tables\Columns\TextColumn::make('no_telp')
+                    ->searchable()
+                    ->label('No. Telepon'),
+                Tables\Columns\TextColumn::make('tgl_masuk')
+                    ->date()
                     ->sortable()
-                    ->searchable(),
-
-                TextColumn::make('jabatan')
-                    ->label('Jabatan')
-                    ->sortable(),
-
-                TextColumn::make('alamat')
-                    ->label('Alamat')
-                    ->sortable(),
-
-                TextColumn::make('no_telp')
-                    ->label('No Telp')
-                    ->sortable(),
-
-                TextColumn::make('tgl_masuk')
-                    ->label('Tanggal Masuk')
-                    ->sortable(),
+                    ->label('Tanggal Masuk'),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('jenis_Pegawai')
+                    ->options([
+                        'Pegawai' => 'Pegawai',
+                        'Kurir' => 'Kurir',
+                    ])
+                    ->label('Jenis Pegawai'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

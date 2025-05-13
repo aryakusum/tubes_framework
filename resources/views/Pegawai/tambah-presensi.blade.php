@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Presensi</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-900 min-h-screen flex">
     <!-- Sidebar -->
     <aside class="w-64 bg-gray-800 text-white flex flex-col py-8 px-4 min-h-screen">
@@ -47,11 +49,15 @@
                 @csrf
                 <div class="mb-3">
                     <label for="id_pegawai" class="block mb-1">ID Pegawai</label>
-                    <input type="text" name="id_pegawai" id="id_pegawai" class="w-full border px-3 py-2 rounded bg-gray-100" value="{{ Auth::user()->id_pegawai }}" readonly>
+                    <input type="text" name="id_pegawai" id="id_pegawai" class="w-full border px-3 py-2 rounded bg-gray-100" value="{{ $pegawai->id }}" readonly>
                 </div>
                 <div class="mb-3">
-                    <label for="nama" class="block mb-1">Nama</label>
-                    <input type="text" name="nama" id="nama" class="w-full border px-3 py-2 rounded bg-gray-100" value="{{ Auth::user()->name }}" readonly>
+                    <label for="nama" class="block mb-1">Nama Pegawai</label>
+                    <input type="text" name="nama" id="nama" class="w-full border px-3 py-2 rounded bg-gray-100" value="{{ $pegawai->nama_pegawai }}" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="block mb-1">Email</label>
+                    <input type="email" name="email" id="email" class="w-full border px-3 py-2 rounded bg-gray-100" value="{{ $pegawai->user->email }}" readonly>
                 </div>
                 <div class="mb-3">
                     <label class="block mb-1">Tanggal</label>
@@ -90,4 +96,5 @@
         });
     </script>
 </body>
-</html> 
+
+</html>
