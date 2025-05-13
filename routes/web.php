@@ -4,49 +4,19 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PegawaiAuthController;
 use App\Http\Controllers\KonsumenAuthController;
 use App\Http\Controllers\KonsumenController;
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\KeranjangController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PresensiController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('konsumen.login');
 });
-
-//tambahan baru tubes
-Route::get('/', function () {
-    // return view('welcome');
-    // diarahkan ke login customer
-    return view('login');
-});
-// login customer
-
-Route::get('/Pegawai', function () {
-    return view('Presensi');
-});
-// tambahan route untuk proses login
-
-
-Route::get('/Pegawai', [PegawaiAuthController::class, 'showLoginForm'])
-    ->middleware('Pegawai')
-    ->name('Presensi');
-Route::post('/Pegawai', [PegawaiAuthController::class, 'login']);
-
-Route::get('/logout', function () {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect('/Pegawai');
-})->name('logout');
 
 // Login & Register Konsumen
 Route::get('/konsumen/login', [KonsumenAuthController::class, 'showLoginForm'])->name('konsumen.login');
@@ -56,24 +26,52 @@ Route::post('/konsumen/register', [KonsumenAuthController::class, 'register']);
 Route::get('/konsumen/verify-otp', [KonsumenAuthController::class, 'showVerifyOtpForm'])->name('konsumen.verify-otp');
 Route::post('/konsumen/verify-otp', [KonsumenAuthController::class, 'verifyOtp']);
 Route::post('/konsumen/send-otp', [KonsumenController::class, 'sendOtp']);
-Route::get('/konsumen/dashboard', [SomeController::class, 'someMethod']);
 
+// Logout Route
 Route::post('/logout', function () {
     Auth::logout();
     return redirect('konsumen/login');
 })->name('logout');
 
-Route::get('/keranjang', [CartController::class, 'viewCart'])->name('cart.view');
-// Route untuk mengurangi quantity produk di keranjang
-Route::post('/keranjang/{id}/decrease', [CartController::class, 'decreaseQuantity'])->name('cart.decrease');
-// Route untuk menambah quantity produk di keranjang
-Route::post('/keranjang/{id}/increase', [CartController::class, 'increaseQuantity'])->name('cart.increase');
-Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+// Pegawai Routes
+Route::get('/loginpegawai', [PegawaiAuthController::class, 'showLoginForm'])->name('loginpegawai');
+Route::post('/loginpegawai', [PegawaiAuthController::class, 'login'])->name('pegawai.login');
 
-Route::get('/keranjang', [KonsumenController::class, 'viewCart'])->name('cart.view');
+// Protected Pegawai Routes
+Route::middleware(['auth', 'Pegawai'])->group(function () {
+    Route::get('/dashboard-pegawai', function () {
+        $presensis = \App\Models\Presensi::orderBy('tanggal', 'desc')->get();
+        $pegawai = auth()->user()->pegawai;
+        return view('dashboard-pegawai', compact('presensis', 'pegawai'));
+    })->name('dashboard.pegawai');
+
+    Route::get('/pegawai/tambah-presensi', [PresensiController::class, 'create'])->name('presensi.create');
+    Route::post('/pegawai/tambah-presensi', [PresensiController::class, 'store'])->name('presensi.store');
+
+    Route::get('/dashboard-pegawai-keluar', function () {
+        $presensis = \App\Models\Presensi::orderBy('tanggal', 'desc')->get();
+        $pegawai = auth()->user()->pegawai;
+        return view('dashboard-pegawai-keluar', compact('presensis', 'pegawai'));
+    })->name('dashboard.pegawai.keluar');
+});
+
+// Presensi Routes
+Route::resource('presensi', App\Http\Controllers\PresensiController::class);
+Route::post('/presensi/keluar/{id}', [PresensiController::class, 'updateJamKeluar'])->name('presensi.keluar');
+Route::post('/presensi/mulai-bekerja/{id}', [PresensiController::class, 'mulaiBekerja'])->name('presensi.mulai_bekerja');
+
+// Konsumen & Keranjang Routes
+Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('konsumen.addToCart');
+Route::get('/dashboard', [KeranjangController::class, 'dashboard'])->name('dashboard');
+Route::get('/galeri', [KeranjangController::class, 'dashboard'])->name('galeri');
 Route::get('/konsumen/keranjang', [KonsumenController::class, 'keranjang'])->name('konsumen.keranjang');
-Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('add.to.cart');
-Route::get('/dashboard', [KeranjangController::class, 'dashboard']);
+
+// Jika ingin fitur cart lengkap, tambahkan route berikut (pastikan controller dan method ada):
+// Route::get('/keranjang', [KeranjangController::class, 'viewCart'])->name('cart.view');
+// Route::post('/keranjang/{id}/decrease', [KeranjangController::class, 'decreaseQuantity'])->name('cart.decrease');
+// Route::post('/keranjang/{id}/increase', [KeranjangController::class, 'increaseQuantity'])->name('cart.increase');
+// Route::get('/checkout', [KeranjangController::class, 'checkout'])->name('checkout');
+
 Route::middleware(['auth', 'konsumen'])->group(function () {
     Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');
 });
