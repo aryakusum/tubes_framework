@@ -15,11 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('nama_pegawai');
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
-            $table->enum('jenis_Pegawai', ['Pegawai','Kurir']);
+            $table->enum('jenis_Pegawai', ['Pegawai', 'Kurir']);
             $table->string('jabatan');
             $table->string('alamat');
             $table->string('no_telp');
             $table->date('tgl_masuk');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Pegawai</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-900 min-h-screen flex">
     <!-- Sidebar -->
     <aside class="w-64 bg-gray-800 text-white flex flex-col py-8 px-4 min-h-screen">
@@ -17,7 +19,7 @@
             </div>
         </div>
         <nav class="flex-1">
-        <ul class="space-y-2">
+            <ul class="space-y-2">
                 <li><a href="/dashboard-pegawai" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 rounded font-bold">Presensi Masuk</a></li>
             </ul>
             <ul class="space-y-2">
@@ -25,7 +27,7 @@
             </ul>
         </nav>
         <div class="mt-8">
-            <form method="POST" action="/logout">
+            <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded transition duration-200 mt-4">
                     Logout
@@ -76,7 +78,7 @@
                                     <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-xs font-semibold">Simpan</button>
                                 </form>
                                 @else
-                                    {{ $presensi->jam_keluar }}
+                                {{ $presensi->jam_keluar }}
                                 @endif
                             </td>
                             <td class="px-3 py-2">{{ $presensi->status }}</td>
@@ -89,4 +91,5 @@
         </div>
     </main>
 </body>
-</html> 
+
+</html>

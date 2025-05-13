@@ -19,9 +19,22 @@ class Pegawai extends Model
         'alamat',
         'no_telp',
         'tgl_masuk',
+        'user_id',
+        'gaji_pokok'
     ];
+
     public function user()
-{
-    return $this->belongsTo(User::class);
-}
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function presensi()
+    {
+        return $this->hasMany(Presensi::class, 'id_pegawai', 'id');
+    }
+
+    public function detailPenggajian()
+    {
+        return $this->hasMany(DetailPenggajian::class, 'id_pegawai', 'id');
+    }
 }

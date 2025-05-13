@@ -56,4 +56,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->user_group === 'admin';
     }
+
+    public function pegawai()
+    {
+        return $this->hasOne(Pegawai::class, 'user_id');
+    }
 }

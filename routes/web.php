@@ -20,30 +20,10 @@ use App\Http\Controllers\PresensiController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
-
-//tambahan baru tubes
-Route::get('/', function () {
     // return view('welcome');
     // diarahkan ke login customer
     return view('konsumen.login');
 });
-// login customer
-
-Route::middleware(['auth', 'role:Pegawai'])->group(function () {
-    Route::get('/Pegawai', [PegawaiAuthController::class, 'showLoginForm'])
-        ->middleware('Pegawai')
-        ->name('Presensi');
-    Route::post('/Pegawai', [PegawaiAuthController::class, 'Presensi']);
-});
-
-Route::get('/logout', function () {
-    Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect('/loginpegawai');
-})->name('logout');
 
 // Login & Register Konsumen
 Route::get('/konsumen/login', [KonsumenAuthController::class, 'showLoginForm'])->name('konsumen.login');
@@ -54,6 +34,13 @@ Route::get('/konsumen/verify-otp', [KonsumenAuthController::class, 'showVerifyOt
 Route::post('/konsumen/verify-otp', [KonsumenAuthController::class, 'verifyOtp']);
 Route::post('/konsumen/send-otp', [KonsumenController::class, 'sendOtp']);
 
+// Logout Route
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect()->route('konsumen.login');
+})->name('logout');
+
+// Pegawai Routes
 Route::get('/loginpegawai', function () {
     return view('Presensi');
 })->name('loginpegawai');
@@ -79,12 +66,12 @@ Route::middleware(['auth', 'Pegawai'])->group(function () {
     })->name('dashboard.pegawai.keluar');
 });
 
+// Presensi Routes
 Route::resource('presensi', App\Http\Controllers\PresensiController::class);
 Route::post('/presensi/keluar/{id}', [PresensiController::class, 'updateJamKeluar'])->name('presensi.keluar');
 Route::post('/presensi/mulai-bekerja/{id}', [PresensiController::class, 'mulaiBekerja'])->name('presensi.mulai_bekerja');
 
-// Routes for Konsumen
-Route::get('/konsumen/dashboard', [KonsumenController::class, 'dashboard'])->name('konsumen.dashboard');
+// Konsumen Routes
 Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->name('konsumen.addToCart');
 Route::get('/dashboard', [KeranjangController::class, 'dashboard'])->name('dashboard');
 Route::get('/galeri', [KeranjangController::class, 'dashboard'])->name('galeri');
