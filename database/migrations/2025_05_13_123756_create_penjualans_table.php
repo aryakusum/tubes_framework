@@ -13,13 +13,11 @@ return new class extends Migration
     {
         Schema::create('penjualan', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_pegawai');
-            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
-            $table->enum('jenis_Pegawai', ['Pegawai','Kurir']);
-            $table->string('jabatan');
-            $table->string('alamat');
-            $table->string('no_telp');
-            $table->date('tgl_masuk');
+            $table->foreignId('pembeli_id')->constrained('pembeli')->onDelete('cascade');
+            $table->string('no_faktur'); 
+            $table->string('status'); 
+            $table->datetime('tgl'); 
+            $table->decimal('tagihan', 15, 2)->nullable();
             $table->timestamps();
         });
     }
