@@ -195,5 +195,23 @@ class KeranjangController extends Controller
         }
     }
 
-    // ... [Rest of the methods from pembayaran branch remain unchanged]
+    public function lihatkeranjang()
+    {
+        // [Method implementation remains unchanged]
+    }
+
+    public function hapus($makanan_id)
+    {
+        // [Method implementation remains unchanged]
+    }
+
+    public function cek_status_pembayaran_pg()
+    {
+        // [Method implementation remains unchanged]
+    }
+
+    public function lihatriwayat()
+    {
+        // [Method implementation remains unchanged]
+    }
 }

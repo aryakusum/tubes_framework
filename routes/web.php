@@ -9,6 +9,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CobaMidtransController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\PengirimanEmailController;
 
 // Coba Midtrans
 Route::get('/cekmidtrans', [CobaMidtransController::class, 'cekmidtrans']);
@@ -88,7 +89,10 @@ Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->
 Route::get('/dashboard', [KeranjangController::class, 'dashboard'])->name('dashboard');
 Route::get('/galeri', [KeranjangController::class, 'dashboard'])->name('galeri');
 
-// Payment Callback Routes
+// Payment Routes
 Route::get('/payment/finish', [CartController::class, 'handlePaymentFinish'])->name('payment.finish');
 Route::get('/payment/error', [CartController::class, 'handlePaymentError'])->name('payment.error');
 Route::get('/payment/cancel', [CartController::class, 'handlePaymentCancel'])->name('payment.cancel');
+
+// Email Routes
+Route::get('/proses_kirim_email_pembayaran', [PengirimanEmailController::class, 'proses_kirim_email_pembayaran']);
