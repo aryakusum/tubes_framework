@@ -27,15 +27,14 @@ class PegawaiAuthController extends Controller
             'password' => 'required|min:6',
         ]);
 
-        // if (Auth::attempt($credentials)) {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'user_group' => 'Pegawai'])) {
             $request->session()->regenerate();
-            return redirect()->intended('/Pegawai');
+            return redirect()->route('dashboard.pegawai');
         }
 
         return back()->withErrors([
             'email' => 'Email atau password salah.',
-            'user_group' => 'User Grup tidak berhak mengakses',
+            'user_group' => 'User Grup ini tidak berhak mengakses coba dicek kembali',
         ]);
     }
 
@@ -45,7 +44,7 @@ class PegawaiAuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/Pegawai');
+        return redirect()->route('loginpegawai');
     }
 
     // ubah password

@@ -43,7 +43,7 @@ class PenjualanResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
-        // merubah nama label menjadi Pembeli
+    // merubah nama label menjadi Pembeli
     protected static ?string $navigationLabel = 'Penjualan';
 
     // tambahan buat grup masterdata
@@ -61,9 +61,9 @@ class PenjualanResource extends Resource
                             Forms\Components\Section::make('Faktur') // Bagian pertama
                                 // ->description('Detail Makanan')
                                 ->icon('heroicon-m-document-duplicate')
-                                ->schema([ 
+                                ->schema([
                                     TextInput::make('no_faktur')
-                                        ->default(fn () => Penjualan::getKodeFaktur()) // Ambil default dari method getKodeMakanan
+                                        ->default(fn() => Penjualan::getKodeFaktur()) // Ambil default dari method getKodeMakanan
                                         ->label('Nomor Faktur')
                                         ->required()
                                         ->readonly() // Membuat field menjadi read-only
@@ -78,29 +78,23 @@ class PenjualanResource extends Resource
                                     ,
                                     TextInput::make('tagihan')
                                         ->default(0) // Nilai default
-                                        ->hidden()
-                                    ,
+                                        ->hidden(),
                                     TextInput::make('status')
                                         ->default('pesan') // Nilai default status pemesanan adalah pesan/bayar/kirim
-                                        ->hidden()
-                                    ,
+                                        ->hidden(),
                                 ])
                                 ->collapsible() // Membuat section dapat di-collapse
-                                ->columns(3)
-                            ,
+                                ->columns(3),
                         ]),
                     Wizard\Step::make('Pilih Makanan')
-                    ->schema([
-                        // 
+                        ->schema([
                             // untuk menambahkan repeater
                             Repeater::make('items')
-                            ->relationship('penjualanMakanan')
-                            // ->live()
-                            ->schema([
-                                Select::make('makanan_id')
+                                ->relationship('penjualanMakanan')
+                                ->schema([
+                                    Select::make('makanan_id')
                                         ->label('Makanan')
                                         ->options(Makanan::pluck('nama_makanan', 'id')->toArray())
-                                        // Mengambil data dari tabel
                                         ->required()
                                         ->disableOptionsWhenSelectedInSiblingRepeaterItems() //agar komponen item tidak berulang
                                         ->reactive() // Membuat field reactive
@@ -108,58 +102,46 @@ class PenjualanResource extends Resource
                                         ->afterStateUpdated(function ($state, $set) {
                                             $makanan = Makanan::find($state);
                                             $set('harga_beli', $makanan ? $makanan->harga_makanan : 0);
-                                            $set('harga_jual', $makanan ? $makanan->harga_makanan*1.2 : 0);
+                                            $set('harga_jual', $makanan ? $makanan->harga_makanan * 1.2 : 0);
                                         })
-                                        ->searchable()
-                                ,
-                                TextInput::make('harga_beli')
-                                    ->label('Harga Beli')
-                                    ->numeric()
-                                    ->default(fn ($get) => $get('makanan_id') ? Makanan::find($get('makanan_id'))?->harga_makanan ?? 0 : 0)
-                                    ->readonly() // Agar pengguna tidak bisa mengedit
-                                    ->hidden()
-                                    ->dehydrated()
-                                ,
-                                TextInput::make('harga_jual')
-                                    ->label('Harga Makanan')
-                                    ->numeric()
-                                    // ->reactive()
-                                    ->readonly() // Agar pengguna tidak bisa mengedit
-                                    // ->required()
-                                    ->dehydrated()
-                                ,
-                                TextInput::make('jml')
-                                    ->label('Jumlah')
-                                    ->default(1)
-                                    ->reactive()
-                                    ->live()
-                                    ->required()
-                                    ->afterStateUpdated(function ($state, $set, $get) {
-                                        // $harga = $get('harga_jual'); // Ambil harga makanan
-                                        // $total = $harga * $state; // Hitung total
-                                        // $set('total', $total); // Set total secara otomatis
-                                        $totalTagihan = collect($get('penjualan_makanan'))
-                                        ->sum(fn ($item) => ($item['harga_jual'] ?? 0) * ($item['jml'] ?? 0));
-                                        $set('tagihan', $totalTagihan);
-                                    })
-                                ,
-                                DatePicker::make('tgl')
-                                ->default(today()) // Nilai default: hari ini
+                                        ->searchable(),
+                                    TextInput::make('harga_beli')
+                                        ->label('Harga Beli')
+                                        ->numeric()
+                                        ->default(fn($get) => $get('makanan_id') ? Makanan::find($get('makanan_id'))?->harga_makanan ?? 0 : 0)
+                                        ->readonly()
+                                        ->hidden()
+                                        ->dehydrated(),
+                                    TextInput::make('harga_jual')
+                                        ->label('Harga Makanan')
+                                        ->numeric()
+                                        ->readonly()
+                                        ->dehydrated(),
+                                    TextInput::make('jml')
+                                        ->label('Jumlah')
+                                        ->default(1)
+                                        ->reactive()
+                                        ->live()
+                                        ->required()
+                                        ->afterStateUpdated(function ($state, $set, $get) {
+                                            $totalTagihan = collect($get('penjualan_makanan'))
+                                                ->sum(fn($item) => ($item['harga_jual'] ?? 0) * ($item['jml'] ?? 0));
+                                            $set('tagihan', $totalTagihan);
+                                        }),
+                                    DatePicker::make('tgl')
+                                        ->default(today())
+                                        ->required(),
+                                ])
+                                ->columns([
+                                    'md' => 4,
+                                ])
+                                ->addable()
+                                ->deletable()
+                                ->reorderable()
+                                ->createItemButtonLabel('Tambah Item')
+                                ->minItems(1)
                                 ->required(),
-                            ])
-                            ->columns([
-                                'md' => 4, //mengatur kolom menjadi 4
-                            ])
-                            ->addable()
-                            ->deletable()
-                            ->reorderable()
-                            ->createItemButtonLabel('Tambah Item') // Tombol untuk menambah item baru
-                            ->minItems(1) // Minimum item yang harus diisi
-                            ->required() // Field repeater wajib diisi
-                            ,
 
-                            //tambahan form simpan sementara
-                            // **Tombol Simpan Sementara**
                             Forms\Components\Actions::make([
                                 Forms\Components\Actions\Action::make('Simpan Sementara')
                                     ->action(function ($get) {
@@ -173,7 +155,6 @@ class PenjualanResource extends Resource
                                             ]
                                         );
 
-                                        // Simpan data makanan
                                         foreach ($get('items') as $item) {
                                             PenjualanMakanan::updateOrCreate(
                                                 [
@@ -188,38 +169,29 @@ class PenjualanResource extends Resource
                                                 ]
                                             );
 
-                                            // Kurangi stok makanan di tabel makanan
                                             $makanan = Makanan::find($item['makanan_id']);
                                             if ($makanan) {
-                                                $makanan->decrement('stok_makanan', $item['jml']); // Kurangi stok sesuai jumlah makanan yang dibeli
+                                                $makanan->decrement('stok_makanan', $item['jml']);
                                             }
                                         }
 
-                                        // Hitung total tagihan
                                         $totalTagihan = PenjualanMakanan::where('penjualan_id', $penjualan->id)
                                             ->sum(DB::raw('harga_jual * jml'));
 
-                                        // Update tagihan di tabel penjualan2
                                         $penjualan->update(['tagihan' => $totalTagihan]);
-                                                                    })
-                                        
-                                        ->label('Proses')
-                                        ->color('primary'),
-                                                            
-                                    ])    
-       
-                        // 
-                    ])
-                    ,
+                                    })
+                                    ->label('Proses')
+                                    ->color('primary'),
+                            ])
+                        ]),
                     Wizard\Step::make('Pembayaran')
                         ->schema([
                             Placeholder::make('Tabel Pembayaran')
-                                    ->content(fn (Get $get) => view('filament.components.penjualan-table', [
-                                        'pembayarans' => Penjualan::where('no_faktur', $get('no_faktur'))->get()
-                                ])), 
+                                ->content(fn(Get $get) => view('filament.components.penjualan-table', [
+                                    'pembayarans' => Penjualan::where('no_faktur', $get('no_faktur'))->get()
+                                ])),
                         ]),
                 ])->columnSpan(3)
-                // Akhir Wizard
             ]);
     }
 
@@ -228,22 +200,20 @@ class PenjualanResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('no_faktur')->label('No Faktur')->searchable(),
-                TextColumn::make('pembeli.nama_pembeli') // Relasi ke nama pembeli
+                TextColumn::make('pembeli.nama_pembeli')
                     ->label('Nama Pembeli')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'bayar' => 'success',
                         'pesan' => 'warning',
                     }),
                 TextColumn::make('tagihan')
-                    ->formatStateUsing(fn ($state)=>"Rp".number_format($state,0,',',','))
-                    // ->extraAttributes(['class' => 'text-right']) // Tambahkan kelas CSS untuk rata kanan
+                    ->formatStateUsing(fn($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->sortable()
-                    ->alignment('end') // Rata kanan
-                ,
+                    ->alignment('end'),
                 TextColumn::make('created_at')->label('Tanggal')->dateTime(),
             ])
             ->filters([
@@ -254,7 +224,7 @@ class PenjualanResource extends Resource
                         'bayar' => 'Pembayaran',
                     ])
                     ->searchable()
-                    ->preload(), // Menampilkan semua opsi saat filter diklik
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

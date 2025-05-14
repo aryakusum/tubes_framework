@@ -15,13 +15,9 @@ class PegawaiMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // return $next($request);
-        // Cek apakah user sudah login dan memiliki user_group = 'customer'
         if (auth()->check() && auth()->user()->user_group === 'Pegawai') {
-            return $next($request); // Lanjut ke request berikutnya
+            return $next($request);
         }
-
-        // Jika bukan admin, redirect ke halaman lain atau tampilkan error
-        return abort(403, 'Anda tidak memiliki akses');
+        return abort(403, 'ANDA TIDAK MEMILIKI AKSES KE HALAMAN INI');
     }
 }

@@ -22,7 +22,15 @@ class MakananResource extends FilamentResource
 {
     protected static ?string $model = Makanan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cake';
+
+    protected static ?string $navigationLabel = 'Data Makanan';
+
+    protected static ?string $modelLabel = 'Makanan';
+
+    protected static ?string $pluralModelLabel = 'Makanan';
+
+    protected static ?string $navigationGroup = 'Master Data';
 
     public static function form(Form $form): Form
     {
@@ -47,6 +55,11 @@ class MakananResource extends FilamentResource
             TextInput::make('nama_makanan')
                 ->required()
                 ->maxLength(255),
+            Toggle::make('halal')
+                ->required()
+                ->default(true)
+                ->label('Halal')
+                ->helperText('Apakah makanan ini halal?'),
             Textarea::make('deskripsi_makanan')
                 ->required()
                 ->rows(3)
@@ -75,6 +88,11 @@ class MakananResource extends FilamentResource
             TextColumn::make('nama_makanan')
                 ->searchable()
                 ->sortable(),
+            IconColumn::make('halal')
+                ->boolean()
+                ->trueIcon('heroicon-o-check-circle')
+                ->falseIcon('heroicon-o-x-circle')
+                ->label('Status Halal'),
             TextColumn::make('deskripsi_makanan')
                 ->searchable()
                 ->wrap()
