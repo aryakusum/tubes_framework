@@ -260,7 +260,7 @@
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
           },
           body: JSON.stringify({
-            product_id: productId,
+            makanan_id: productId,
             quantity: quantity
           })
         })

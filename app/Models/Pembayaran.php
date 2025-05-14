@@ -9,7 +9,34 @@ class Pembayaran extends Model
 {
     use HasFactory;
 
-    protected $table = 'pembayaran'; // Nama tabel eksplisit
+    protected $table = 'pembayaran';
 
-    protected $guarded = [];
+    protected $fillable = [
+        'penjualan_id',
+        'tgl_bayar',
+        'jenis_pembayaran',
+        'transaction_time',
+        'gross_amount',
+        'order_id',
+        'payment_type',
+        'status_code',
+        'transaction_id',
+        'settlement_time',
+        'status_message',
+        'merchant_id'
+    ];
+
+    protected $casts = [
+        'tgl_bayar' => 'date',
+        'transaction_time' => 'datetime',
+        'settlement_time' => 'datetime',
+        'gross_amount' => 'decimal:2'
+    ];
+
+    public $timestamps = true;
+
+    public function penjualan()
+    {
+        return $this->belongsTo(Penjualan::class, 'penjualan_id');
+    }
 }

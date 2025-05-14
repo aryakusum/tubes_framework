@@ -87,3 +87,8 @@ Route::post('/konsumen/add-to-cart', [KonsumenController::class, 'addToCart'])->
 // Additional Routes
 Route::get('/dashboard', [KeranjangController::class, 'dashboard'])->name('dashboard');
 Route::get('/galeri', [KeranjangController::class, 'dashboard'])->name('galeri');
+
+// Payment Callback Routes
+Route::get('/payment/finish', [CartController::class, 'handlePaymentFinish'])->name('payment.finish');
+Route::get('/payment/error', [CartController::class, 'handlePaymentError'])->name('payment.error');
+Route::get('/payment/cancel', [CartController::class, 'handlePaymentCancel'])->name('payment.cancel');
