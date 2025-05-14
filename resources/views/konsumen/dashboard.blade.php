@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Halaman Dashboard</title>
@@ -39,7 +38,7 @@
     {{-- Header --}}
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm px-4">
         <a class="navbar-brand" href="#">
-            <span>FOODMART</span> <span>MR MANGKOK</span>
+            <span>FOODMART</span> <span>MR BANGKOK</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
             <span class="navbar-toggler-icon"></span>
@@ -89,20 +88,20 @@
     <div class="container py-4">
         <h2 class="mb-4">Produk Terbaru</h2>
         <div class="row">
-            @foreach($makanan as $makanan)
+            @foreach($makanan as $m)
             <div class="col-md-3 mb-4">
                 <div class="card product-card h-100 shadow-sm">
-                    <img src="{{ asset('storage/' . $makanan->gambar) }}" class="card-img-top" alt="{{ $makanan->nama_makanan }}" style="height: 150px; object-fit: contain;">
+                    <img src="{{ asset('storage/' . $m->gambar) }}" class="card-img-top" alt="{{ $m->nama_makanan }}" style="height: 150px; object-fit: contain;">
                     <div class="card-body text-center">
-                        <h5 class="card-title">{{ $makanan->nama_makanan }}</h5>
+                        <h5 class="card-title">{{ $m->nama_makanan }}</h5>
                         {{-- Rating --}}
                         <p class="mb-1 text-muted" style="font-size: 0.9rem;">
-                            <span class="text-warning">★</span> <strong>{{ number_format($makanan->rating ?? 5.00, 2) }}</strong>
+                            <span class="text-warning">★</span> <strong>{{ number_format($m->rating ?? 5.00, 2) }}</strong>
                         </p>
-                        <p class="card-text fw-bold text-primary">Rp {{ number_format($makanan->harga_makanan, 0, ',', '.') }}</p>
-                        <form action="{{ route('konsumen.addToCart') }}" method="POST" class="mt-2">
+                        <p class="card-text fw-bold text-primary">Rp {{ number_format($m->harga_makanan, 0, ',', '.') }}</p>
+                        <form action="{{ route('add.to.cart') }}" method="POST" class="mt-2">
                             @csrf
-                            <input type="hidden" name="makanan_id" value="{{ $makanan->id }}">
+                            <input type="hidden" name="makanan_id" value="{{ $m->id }}">
                             <div class="input-group justify-content-center mb-2" style="width: 140px; margin: auto;">
                                 <button class="btn btn-outline-secondary btn-sm" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">−</button>
                                 <input type="number" name="quantity" class="form-control form-control-sm text-center" value="1" min="1">

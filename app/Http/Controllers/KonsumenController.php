@@ -100,7 +100,7 @@ class KonsumenController extends Controller
         if (isset($cart[$id])) {
             $cart[$id]['quantity'] += $request->quantity;
         } else {
-            $makanan = \App\Models\Makanan::find($id);
+            $makanan = Makanan::find($id);
             $cart[$id] = [
                 'nama' => $makanan->nama_makanan,
                 'harga' => $makanan->harga_makanan,
