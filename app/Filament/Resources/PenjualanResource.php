@@ -149,9 +149,6 @@ class PenjualanResource extends Resource
                                     ->live()
                                     ->required()
                                     ->afterStateUpdated(function ($state, $set, $get) {
-                                        // $harga = $get('harga_jual'); // Ambil harga barang
-                                        // $total = $harga * $state; // Hitung total
-                                        // $set('total', $total); // Set total secara otomatis
                                         $totalTagihan = collect($get('penjualan_makanan'))
                                         ->sum(fn ($item) => ($item['harga_jual'] ?? 0) * ($item['jml'] ?? 0));
                                         $set('tagihan', $totalTagihan);
@@ -172,8 +169,6 @@ class PenjualanResource extends Resource
                             ->required() // Field repeater wajib diisi
                             ,
 
-                            //tambahan form simpan sementara
-                            // **Tombol Simpan Sementara**
                             Forms\Components\Actions::make([
                                 Forms\Components\Actions\Action::make('Simpan Sementara')
                                     ->action(function ($get) {
@@ -187,12 +182,11 @@ class PenjualanResource extends Resource
                                             ]
                                         );
 
-                                        // Simpan data barang
                                         foreach ($get('items') as $item) {
                                             PenjualanMakanan::updateOrCreate(
                                                 [
                                                     'penjualan_id' => $penjualan->id,
-                                                    'makananid' => $item['makanan_id']
+                                                    'makanan_id' => $item['makanan_id']
                                                 ],
                                                 [
                                                     'harga_beli' => $item['harga_beli'],
@@ -202,38 +196,29 @@ class PenjualanResource extends Resource
                                                 ]
                                             );
 
-                                            // Kurangi stok barang di tabel barang
                                             $makanan = Makanan::find($item['makanan_id']);
                                             if ($makanan) {
-                                                $makanan->decrement('stok', $item['jml']); // Kurangi stok sesuai jumlah barang yang dibeli
+                                                $makanan->decrement('stok_makanan', $item['jml']);
                                             }
                                         }
 
-                                        // Hitung total tagihan
                                         $totalTagihan = PenjualanMakanan::where('penjualan_id', $penjualan->id)
                                             ->sum(DB::raw('harga_jual * jml'));
 
-                                        // Update tagihan di tabel penjualan2
                                         $penjualan->update(['tagihan' => $totalTagihan]);
-                                                                    })
-                                        
-                                        ->label('Proses')
-                                        ->color('primary'),
-                                                            
-                                    ])    
-       
-                        // 
-                    ])
-                    ,
+                                    })
+                                    ->label('Proses')
+                                    ->color('primary'),
+                            ])
+                        ]),
                     Wizard\Step::make('Pembayaran')
                         ->schema([
                             Placeholder::make('Tabel Pembayaran')
-                                    ->content(fn (Get $get) => view('filament.components.penjualan-table', [
-                                        'pembayarans' => Penjualan::where('no_faktur', $get('no_faktur'))->get()
-                                ])), 
+                                ->content(fn(Get $get) => view('filament.components.penjualan-table', [
+                                    'pembayarans' => Penjualan::where('no_faktur', $get('no_faktur'))->get()
+                                ])),
                         ]),
                 ])->columnSpan(3)
-                // Akhir Wizard
             ]);
     }
 
@@ -242,7 +227,7 @@ class PenjualanResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('no_faktur')->label('No Faktur')->searchable(),
-                TextColumn::make('pembeli.nama_pembeli') // Relasi ke nama pembeli
+                TextColumn::make('pembeli.nama_pembeli')
                     ->label('Nama Pembeli')
                     ->sortable()
                     ->searchable(),
@@ -254,10 +239,8 @@ class PenjualanResource extends Resource
                     }),
                 TextColumn::make('tagihan')
                     ->formatStateUsing(fn (string|int|null $state): string => rupiah($state))
-                    // ->extraAttributes(['class' => 'text-right']) // Tambahkan kelas CSS untuk rata kanan
                     ->sortable()
-                    ->alignment('end') // Rata kanan
-                ,
+                    ->alignment('end'),
                 TextColumn::make('created_at')->label('Tanggal')->dateTime(),
             ])
             ->filters([
@@ -268,17 +251,14 @@ class PenjualanResource extends Resource
                         'bayar' => 'Pembayaran',
                     ])
                     ->searchable()
-                    ->preload(), // Menampilkan semua opsi saat filter diklik
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
-            // tombol tambahan
             ->headerActions([
-                // tombol tambahan export pdf
-                // ✅ Tombol Unduh PDF
                 TableAction::make('downloadPdf')
                 ->label('Unduh PDF')
                 ->icon('heroicon-o-document-arrow-down')

@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Makanan;
-
 
 class Makanan extends Model
 {
@@ -19,7 +17,6 @@ class Makanan extends Model
         'stok_makanan',
         'gambar'
     ];
-
 
     public function getFormattedPriceAttribute()
     {

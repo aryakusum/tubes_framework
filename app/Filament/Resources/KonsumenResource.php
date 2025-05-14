@@ -18,12 +18,14 @@ class KonsumenResource extends Resource
     protected static ?string $model = Konsumen::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
-    
-    protected static ?string $navigationLabel = 'Data konsumen';
-    
-    protected static ?string $modelLabel = 'konsumen';
-    
-    protected static ?string $pluralModelLabel = 'konsumen';
+
+    protected static ?string $navigationLabel = 'Data Konsumen';
+
+    protected static ?string $modelLabel = 'Konsumen';
+
+    protected static ?string $pluralModelLabel = 'Konsumen';
+
+    protected static ?string $navigationGroup = 'Master Data';
 
     public static function form(Form $form): Form
     {
