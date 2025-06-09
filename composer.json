@@ -9,6 +9,7 @@
         "barryvdh/laravel-dompdf": "^3.1",
         "doctrine/dbal": "^3.9",
         "filament/filament": "^3.2",
+        "filament/widgets": "*",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
