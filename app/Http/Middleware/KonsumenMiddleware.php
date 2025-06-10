@@ -15,7 +15,7 @@ class KonsumenMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && auth()->user()->user_group === 'konsumen') {
+        if (auth()->check() && auth()->user()->user_group === 'Konsumen') {
             return $next($request);
         }
         return abort(403, 'Anda tidak memiliki akses');
