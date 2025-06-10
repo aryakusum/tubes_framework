@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('presensi', function (Blueprint $table) {
-            $table->string('id_pegawai', 10)->after('id');
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->uuid('id');
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -21,8 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('presensi', function (Blueprint $table) {
-            $table->dropColumn('id_pegawai');
-        });
+        Schema::dropIfExists('notifications');
     }
 };
