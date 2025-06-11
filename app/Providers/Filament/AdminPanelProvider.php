@@ -33,8 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login() 
-            ->databaseNotifications()
+            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -50,7 +49,6 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\TotalPresensiChart::class,
                 \App\Filament\Widgets\TotalPenjualanChart::class,
                 \App\Filament\Widgets\PenjualanPerBulanChart::class,
-                \App\Filament\Widgets\TotalPresensiBulananChart::class,
                 \App\Filament\Widgets\PresensiPerbulanChart::class,
             ])
             ->middleware([

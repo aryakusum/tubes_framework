@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
