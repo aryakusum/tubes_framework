@@ -25,6 +25,10 @@ use App\Http\Middleware\AdminOnly;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
+// Tambahkan ini untuk chart makanan
+use App\Filament\Widgets\MakananTerlarisChart;
+
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -34,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->databaseNotifications() // Keep this line as it was present before and is necessary for database notifications
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -50,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\TotalPenjualanChart::class,
                 \App\Filament\Widgets\PenjualanPerBulanChart::class,
                 \App\Filament\Widgets\PresensiPerbulanChart::class,
+                \App\Filament\Widgets\MakananTerlarisChart::class, // Added this from the 'halaman_chindi' branch
             ])
             ->middleware([
                 EncryptCookies::class,
