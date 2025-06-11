@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
@@ -31,7 +32,8 @@ class PenjualanPerBulanChart extends ChartWidget
 
         $data = $allMonths->map(fn($month) => $orders->get($month, 0));
 
-        $labels = $allMonths->map(fn($month) =>
+        $labels = $allMonths->map(
+            fn($month) =>
             Carbon::create()->month($month)->locale('id')->translatedFormat('F')
         );
 

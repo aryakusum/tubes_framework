@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
@@ -13,7 +14,7 @@ class TotalPenjualanChart extends ChartWidget
         // Ambil data total penjualan per pembeli
         $data = Penjualan::query()
             ->join('penjualan_makanan', 'penjualan.id', '=', 'penjualan_makanan.penjualan_id')
-            ->join('pembeli', 'penjualan.pembeli_id', '=', 'pembeli.id') 
+            ->join('pembeli', 'penjualan.pembeli_id', '=', 'pembeli.id')
             ->where('penjualan.status', 'bayar')
             ->selectRaw('pembeli.nama_pembeli, SUM(penjualan_makanan.harga_jual * penjualan_makanan.jml) as total_penjualan')
             ->groupBy('pembeli.nama_pembeli')
