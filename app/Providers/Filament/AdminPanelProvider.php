@@ -29,6 +29,7 @@ use Illuminate\Http\Request;
 use App\Filament\Widgets\MakananTerlarisChart;
 use App\Filament\Widgets\PenjualanPerMenuPerBulanChart;
 
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -38,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->databaseNotifications()
             ->colors([
                 'primary' => Color::Amber,
             ])
