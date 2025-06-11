@@ -40,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
                 \App\Filament\Widgets\DashboardStatCards::class,
-                \App\Filament\Widgets\TotalPresensiBulananChart::class,
+                \App\Filament\Widgets\TotalPresensiChart::class,
                 \App\Filament\Widgets\PresensiPerbulanChart::class,
             ])
             ->middleware([
