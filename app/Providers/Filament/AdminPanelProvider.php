@@ -25,6 +25,10 @@ use App\Http\Middleware\AdminOnly;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
+// Tambahkan ini untuk chart makanan dan penjualan per bulan
+use App\Filament\Widgets\MakananTerlarisChart;
+use App\Filament\Widgets\PenjualanPerMenuPerBulanChart;
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -50,6 +54,8 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\TotalPenjualanChart::class,
                 \App\Filament\Widgets\PenjualanPerBulanChart::class,
                 \App\Filament\Widgets\PresensiPerbulanChart::class,
+                \App\Filament\Widgets\MakananTerlarisChart::class,
+                \App\Filament\Widgets\PenjualanPerMenuPerBulanChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
