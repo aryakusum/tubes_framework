@@ -6,26 +6,24 @@ use App\Filament\Resources\PenjualanResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-// tambahan untuk akses ke penjualanmakanan
+// Model yang digunakan
 use App\Models\Penjualan;
-use App\Models\PenjualanMakanan;
 use App\Models\Pembayaran;
-use Illuminate\Support\Facades\DB;
 
-// untuk notifikasi
+// Notifikasi
 use Filament\Notifications\Notification;
 
 class CreatePenjualan extends CreateRecord
 {
     protected static string $resource = PenjualanResource::class;
 
-    //penanganan kalau status masih kosong 
+    // Default status jika belum diisi
     protected function beforeCreate(): void
     {
         $this->data['status'] = $this->data['status'] ?? 'pesan';
     }
 
-    // tambahan untuk simpan
+    // Tambahkan tombol "Bayar"
     protected function getFormActions(): array
     {
         return [
@@ -40,25 +38,33 @@ class CreatePenjualan extends CreateRecord
         ];
     }
 
-    // penanganan
+    // Simpan data pembayaran
     protected function simpanPembayaran()
     {
-        // $penjualan = $this->record; // Ambil data penjualan yang sedang dibuat
-        $penjualan = $this->record ?? Penjualan::latest()->first(); // Ambil penjualan terbaru jika null
-        // Simpan ke tabel pembayaran2
+        $penjualan = $this->record ?? Penjualan::latest()->first();
+
+        // Hitung total tagihan dari relasi penjualan_makanan
+        $tagihan = $penjualan->penjualanMakanan->sum(function ($item) {
+            return $item->harga_jual * $item->jml;
+        });
+
+        // Simpan pembayaran
         Pembayaran::create([
-            'penjualan_id' => $penjualan->id,
-            'tgl_bayar'    => now(),
-            'jenis_pembayaran' => 'tunai',
-            'transaction_time' => now(),
-            'gross_amount'       => $penjualan->tagihan, // Sesuaikan dengan field di tabel pembayaran
-            'order_id' => $penjualan->no_faktur,
+            'penjualan_id'      => $penjualan->id,
+            'tgl_bayar'         => now(),
+            'jenis_pembayaran'  => 'tunai',
+            'transaction_time'  => now(),
+            'gross_amount'      => $tagihan,
+            'order_id'          => $penjualan->no_faktur,
         ]);
 
-        // Update status penjualan jadi "dibayar"
-        $penjualan->update(['status' => 'bayar']);
+        // Update status dan tagihan di penjualan
+        $penjualan->update([
+            'status'  => 'bayar',
+            'tagihan' => $tagihan,
+        ]);
 
-        // Notifikasi sukses
+        // Notifikasi berhasil
         Notification::make()
             ->title('Pembayaran Berhasil!')
             ->success()

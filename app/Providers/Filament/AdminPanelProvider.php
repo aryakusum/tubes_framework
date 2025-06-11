@@ -18,6 +18,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+// ✅ Tambahkan ini untuk chart makanan
+use App\Filament\Widgets\MakananTerlarisChart;
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -42,6 +45,8 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\DashboardStatCards::class,
                 \App\Filament\Widgets\TotalPresensiBulananChart::class,
                 \App\Filament\Widgets\PresensiPerbulanChart::class,
+                \App\Filament\Widgets\TotalPenjualanChart::class,
+
             ])
             ->middleware([
                 EncryptCookies::class,

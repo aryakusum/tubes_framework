@@ -4,68 +4,85 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
-// untuk tambahan db
 use Illuminate\Support\Facades\DB;
 
 class Penjualan extends Model
 {
     use HasFactory;
 
-    protected $table = 'penjualan'; // Nama tabel eksplisit
+    protected $table = 'penjualan';
 
     protected $fillable = [
         'pembeli_id',
         'no_faktur',
         'status',
         'tgl',
-        'tagihan'
+        'tagihan', // meskipun ini dihitung otomatis, tetap diisi saat create jika diperlukan
     ];
 
     protected $casts = [
         'tgl' => 'datetime',
-        'tagihan' => 'decimal:2'
+        'tagihan' => 'decimal:2',
     ];
 
     public $timestamps = true;
 
+    /**
+     * Menghasilkan kode faktur otomatis
+     */
     public static function getKodeFaktur()
     {
-        // query kode perusahaan
-        $sql = "SELECT IFNULL(MAX(no_faktur), 'F-0000000') as no_faktur 
-                FROM penjualan ";
+        $sql = "SELECT IFNULL(MAX(no_faktur), 'F-0000000') as no_faktur FROM penjualan";
         $kodefaktur = DB::select($sql);
 
-        // cacah hasilnya
         foreach ($kodefaktur as $kdpmbl) {
             $kd = $kdpmbl->no_faktur;
         }
-        // Mengambil substring tiga digit akhir dari string PR-000
+
         $noawal = substr($kd, -7);
-        $noakhir = $noawal + 1; //menambahkan 1, hasilnya adalah integer cth 1
-        $noakhir = 'F-' . str_pad($noakhir, 7, "0", STR_PAD_LEFT); //menyambung dengan string P-00001
-        return $noakhir;
+        $noakhir = (int)$noawal + 1;
+        return 'F-' . str_pad($noakhir, 7, "0", STR_PAD_LEFT);
     }
 
-    // relasi ke tabel pembeli
+    /**
+     * Relasi ke tabel pembeli
+     */
     public function pembeli()
     {
         return $this->belongsTo(Pembeli::class, 'pembeli_id');
     }
 
-    // relasi ke tabel penjualan makanan
+    /**
+     * Relasi ke tabel penjualan makanan
+     */
     public function penjualanMakanan()
     {
         return $this->hasMany(PenjualanMakanan::class, 'penjualan_id');
     }
 
+    /**
+     * Relasi ke user (jika ada field id_konsumen)
+     */
     public function konsumen()
     {
         return $this->belongsTo(User::class, 'id_konsumen');
     }
 
+    /**
+     * Relasi ke tabel pembayaran
+     */
     public function pembayaran()
     {
         return $this->hasOne(Pembayaran::class, 'penjualan_id');
+    }
+
+    /**
+     * Menghitung tagihan dari penjualan makanan (otomatis, tidak tergantung kolom `tagihan`)
+     */
+    public function getTagihanAttribute()
+    {
+        return $this->penjualanMakanan->sum(function ($item) {
+            return $item->harga_jual * $item->jml;
+        });
     }
 }
