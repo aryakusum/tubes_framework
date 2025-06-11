@@ -3,76 +3,51 @@
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\DB;
+use App\Models\Penjualan;
 
 class TotalPenjualanChart extends ChartWidget
 {
-    protected static ?string $heading = 'Total Penjualan per Menu per Bulan';
+    protected static ?string $heading = 'Total Penjualan Chart';
 
     protected function getData(): array
     {
-        // Ambil data penjualan per menu per bulan dari tabel penjualan_makanan JOIN makanan
-    $data = DB::table('penjualan_makanan')
-    ->join('makanan', 'penjualan_makanan.makanan_id', '=', 'makanan.id')
-    ->select([
-        'makanan.nama_makanan as nama_makanan',
-        DB::raw('MONTH(penjualan_makanan.created_at) as bulan'),
-        DB::raw('SUM(penjualan_makanan.harga_jual * penjualan_makanan.jml) as total')
-    ])
-    ->groupBy('nama_makanan', 'bulan')
-    ->orderBy('bulan')
-    ->get();
+        // Ambil data total penjualan per pembeli
+        $data = Penjualan::query()
+            ->join('penjualan_makanan', 'penjualan.id', '=', 'penjualan_makanan.penjualan_id')
+            ->join('pembeli', 'penjualan.pembeli_id', '=', 'pembeli.id')
+            ->where('penjualan.status', 'bayar')
+            ->selectRaw('pembeli.nama_pembeli, SUM(penjualan_makanan.harga_jual * penjualan_makanan.jml) as total_penjualan')
+            ->groupBy('pembeli.nama_pembeli')
+            ->orderByDesc('total_penjualan')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'nama_pembeli' => $item->nama_pembeli,
+                    'total_penjualan' => $item->total_penjualan,
+                ];
+            });
 
-
-        // Ambil semua bulan yang muncul
-        $bulanList = $data->pluck('bulan')->unique()->sort()->values();
-
-        $labels = $bulanList->map(function ($bulan) {
-            return date('F', mktime(0, 0, 0, $bulan, 10));
-        });
-
-        // Ambil semua nama menu unik
-        $menus = $data->pluck('nama_makanan')->unique();
-
-        $datasets = [];
-
-        foreach ($menus as $menu) {
-            $dataset = [
-                'label' => $menu,
-                'data' => [],
-                'backgroundColor' => $this->generateColor($menu),
+        if ($data->isEmpty()) {
+            return [
+                'datasets' => [],
+                'labels' => [],
             ];
-
-            foreach ($bulanList as $bulan) {
-                $total = $data
-                    ->first(fn($row) => $row->nama_makanan == $menu && $row->bulan == $bulan)
-                    ->total ?? 0;
-
-                $dataset['data'][] = $total;
-            }
-
-            $datasets[] = $dataset;
         }
 
         return [
-            'labels' => $labels,
-            'datasets' => $datasets,
+            'datasets' => [
+                [
+                    'label' => 'Total Penjualan',
+                    'data' => $data->pluck('total_penjualan')->toArray(),
+                    'backgroundColor' => '#10b981',
+                ],
+            ],
+            'labels' => $data->pluck('nama_pembeli')->toArray(),
         ];
     }
 
     protected function getType(): string
     {
         return 'bar';
-    }
-
-    // Fungsi untuk membuat warna acak yang konsisten
-    protected function generateColor(string $key): string
-    {
-        $hash = crc32($key);
-        $r = ($hash & 0xFF0000) >> 16;
-        $g = ($hash & 0x00FF00) >> 8;
-        $b = $hash & 0x0000FF;
-
-        return "rgba($r, $g, $b, 0.7)";
     }
 }
