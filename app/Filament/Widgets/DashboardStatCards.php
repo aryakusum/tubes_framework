@@ -1,16 +1,14 @@
-<?php
-
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-
-// tambahan
 use Filament\Widgets\StatsOverviewWidget\Card;
 use App\Models\Penjualan;
 use App\Models\Coa;
 use App\Models\Pembeli;
-
+use App\Models\Presensi;
+use App\Models\Pegawai;
+use Carbon\Carbon;
 use Illuminate\Support\Number;
 
 class DashboardStatCards extends BaseWidget
@@ -25,6 +23,7 @@ class DashboardStatCards extends BaseWidget
             Carbon::parse($this->filters['endDate']) :
             now();
 
+        // Sales statistics
         $isBusinessCustomersOnly = $this->filters['businessCustomersOnly'] ?? null;
         $businessCustomerMultiplier = match (true) {
             boolval($isBusinessCustomersOnly) => 2 / 3,
@@ -50,52 +49,63 @@ class DashboardStatCards extends BaseWidget
             return Number::format($number / 1000000, 2) . 'm';
         };
 
+        // Attendance statistics
+        $totalPresensi = Presensi::whereBetween('tanggal', [$startDate ?? now()->subDays(30), $endDate])
+            ->count();
+
+        $totalPegawai = Pegawai::count();
+
+        $hadirCount = Presensi::whereBetween('tanggal', [$startDate ?? now()->subDays(30), $endDate])
+            ->where('status', 'hadir')
+            ->count();
+
+        $izinCount = Presensi::whereBetween('tanggal', [$startDate ?? now()->subDays(30), $endDate])
+            ->where('status', 'izin')
+            ->count();
+
+        $sakitCount = Presensi::whereBetween('tanggal', [$startDate ?? now()->subDays(30), $endDate])
+            ->where('status', 'sakit')
+            ->count();
+
         return [
+            // Sales Stats
             Stat::make('Total Pembeli', Pembeli::count())
-                ->description('Jumlah pembeli terdaftar')
-            ,
+                ->description('Jumlah pembeli terdaftar'),
             Stat::make('Total Transaksi', Penjualan::count())
-                ->description('Jumlah transaksi')
-            ,
+                ->description('Jumlah transaksi'),
             Stat::make('Total Penjualan', rupiah(
-                        Penjualan::query()
-                        ->where('status', 'bayar') // Filter hanya yang statusnya 'bayar'
-                        ->sum('tagihan')
-                    ))
-                ->description('Jumlah transaksi terbayar')
-            ,
+                Penjualan::query()
+                ->where('status', 'bayar')
+                ->sum('tagihan')
+            ))
+                ->description('Jumlah transaksi terbayar'),
             Stat::make('Total Keuntungan', rupiah(
                 Penjualan::query()
-                ->join('penjualan_makanan', 'penjualan.id', '=', 'penjualan_makanan.penjualan_id') 
-                ->where('status', 'bayar') // Filter hanya yang statusnya 'bayar'
-                ->selectRaw('SUM((penjualan_makanan.harga_jual - penjualan_makanan.harga_beli) * penjualan_makanan.jml) as total_penjualan') // Perhitungan total penjualan
-                ->value('total_penjualan') // Ambil hasil perhitungan
+                ->join('penjualan_makanan', 'penjualan.id', '=', 'penjualan_makanan.penjualan_id')
+                ->where('status', 'bayar')
+                ->selectRaw('SUM((penjualan_makanan.harga_jual - penjualan_makanan.harga_beli) * penjualan_makanan.jml) as total_penjualan')
+                ->value('total_penjualan')
             ))
-                ->description('Jumlah keuntungan')
-            ,
-            Stat::make('Revenue', '$' . $formatNumber($revenue))
-                ->description('32k increase')
-                ->descriptionIcon('heroicon-m-arrow-trending-up')
-                ->chart([7, 2, 10, 3, 15, 4, 17])
-                ->color('success'),
+                ->description('Jumlah keuntungan'),
+
+            // Attendance Stats
+            Stat::make('Total Pegawai', $totalPegawai)
+                ->description('Jumlah pegawai terdaftar'),
+            Stat::make('Total Presensi', $totalPresensi)
+                ->description('Jumlah data presensi (semua status)'),
+            Stat::make('Hadir', $hadirCount)
+                ->description('Jumlah kehadiran pegawai'),
+            Stat::make('Izin', $izinCount)
+                ->description('Jumlah pegawai izin'),
+            Stat::make('Sakit', $sakitCount)
+                ->description('Jumlah pegawai sakit'),
         ];
     }
 
-    // tambahan untuk kartu
     protected function getCards(): array
     {
         return [
-            // Card::make('Total Transaksi', Penjualan::count())
-            //     ->description('Jumlah transaksi yang tercatat')
-            //     // ->color('primary')
-            // ,
-            // Card::make('Total Pendapatan', 'Rp ' . number_format(\App\Models\Transaksi::sum('total')))
-            //     ->description('Total uang masuk')
-            //     ->color('success'),
-
-            // Card::make('Jumlah Akun COA', Coa::count())
-            //     ->description('Data akun aktif')
-            //     ->color('warning'),
+            // Additional cards can be added here if needed
         ];
     }
 }
